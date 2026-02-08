@@ -1,0 +1,141 @@
+---
+import { formateador } from '../lib/utils.ts';
+import type { ScheduleProps } from '../types';
+interface Props extends ScheduleProps {}
+const { Title, description,ScheduleTab } = Astro.props;
+
+---
+
+<section class="max-w-7xl mx-auto w-full px-4 md:px-20 lg:px-40 py-12">
+  <div class="flex flex-col justify-center">
+    <div class="flex gap-4 items-center">
+      <svg
+        viewBox="0 0 24 24"
+        class="size-6"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        ><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier">
+          <path
+            d="M12 7V12L14.5 13.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+            stroke="#1142d4"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </g></svg
+      >
+      <h2 class="text-2xl md:text-3xl font-bold tracking-tight">
+        {Title}
+      </h2>
+    </div>
+    <h5 class="text-primary-text mt-4"
+      >{description}</h5
+    >
+
+    <!-- Tabs Navigation -->
+    <ul class="flex border-b border-gray-200 my-6" role="tablist">
+      {
+        ScheduleTab &&
+        ScheduleTab.map((tab, index) => (
+          <li class="mr-1">
+            <button
+              class={`tab-button uppercase cursor-pointer inline-block py-3 px-6 font-semibold ${
+                index === 0
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-primary-text hover:text-primary border-b-2 border-transparent'
+              } focus:outline-none transition-colors duration-200`}
+              data-tab={`tab${index + 1}`}
+              role="tab"
+              aria-selected={index === 0 ? 'true' : 'false'}
+              aria-controls={`tab${index + 1}-content`}
+            >
+              {tab.Title}
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content">
+      <!-- Tab 1 Content -->
+       {
+        ScheduleTab && ScheduleTab.map((tab, index) => (
+          <div
+            id={`tab${index + 1}-content`}
+            class={`tab-pane ${index === 0 ? '' : 'hidden'}`}
+            role="tabpanel"
+          >
+            <div class="flex gap-4 flex-wrap">
+              {
+                tab.item && tab.item.map((item) => (
+                  <div
+                    class="bg-white rounded-lg border text-primary hover:text-accent-gold transition-all duration-100 border-primary/20 p-6 gap-1 flex flex-col min-w-44 hover:border-accent-gold"
+                  >
+                    <div set:html={item.icon} class="stroke-current"></div>
+                    <h5 class="text-lg text-black font-bold uppercase">
+                      {formateador.format(new Date(`1970-01-01 ${item.time}`))}
+                    </h5>
+                    <h6 class="text-sm text-primary-text">
+                      {item.description}
+                    </h6>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        ))
+       }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Get all tab buttons and tab panes
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabPanes = document.querySelectorAll('.tab-pane');
+
+  // Function to switch tabs
+  function switchTab(tabId: string) {
+    // Hide all tab panes
+    tabPanes.forEach((pane) => {
+      pane.classList.add('hidden');
+    });
+
+    // Remove active styles from all buttons
+    tabButtons.forEach((button) => {
+      button.classList.remove('text-primary', 'border-primary');
+      button.classList.add('text-primary-text', 'border-transparent');
+      button.setAttribute('aria-selected', 'false');
+    });
+
+    // Show selected tab pane
+    const selectedPane = document.getElementById(`${tabId}-content`);
+    if (selectedPane) {
+      selectedPane.classList.remove('hidden');
+    }
+
+    // Add active styles to clicked button
+    const selectedButton = document.querySelector(`[data-tab="${tabId}"]`);
+    if (selectedButton) {
+      selectedButton.classList.remove(
+        'text-primary-text',
+        'border-transparent',
+      );
+      selectedButton.classList.add('text-primary', 'border-primary');
+      selectedButton.setAttribute('aria-selected', 'true');
+    }
+  }
+
+  // Add click event listeners to all tab buttons
+  tabButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const tabId = button.getAttribute('data-tab');
+      if (tabId) {
+        switchTab(tabId);
+      }
+    });
+  });
+</script>

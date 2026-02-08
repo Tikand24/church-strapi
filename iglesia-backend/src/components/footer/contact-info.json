@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_footer_contact_infos",
+  "info": {
+    "displayName": "Contact Info"
+  },
+  "options": {},
+  "attributes": {
+    "phone": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false,
+      "required": true
+    },
+    "whatsapp": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false,
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    }
+  },
+  "config": {}
+}

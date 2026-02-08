@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_footer_locations",
+  "info": {
+    "displayName": "Location"
+  },
+  "options": {},
+  "attributes": {
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": true
+    },
+    "mapUrl": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false
+    },
+    "address": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "config": {}
+}

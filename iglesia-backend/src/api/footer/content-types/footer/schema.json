@@ -1,0 +1,38 @@
+{
+  "kind": "singleType",
+  "collectionName": "footers",
+  "info": {
+    "singularName": "footer",
+    "pluralName": "footers",
+    "displayName": "Footer"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ChurchInfo": {
+      "type": "component",
+      "component": "footer.church-info",
+      "repeatable": false,
+      "required": true
+    },
+    "Location": {
+      "type": "component",
+      "component": "footer.location",
+      "repeatable": false,
+      "required": true
+    },
+    "ContactInfo": {
+      "type": "component",
+      "component": "footer.contact-info",
+      "repeatable": false,
+      "required": true
+    },
+    "SocialLink": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": true
+    }
+  }
+}

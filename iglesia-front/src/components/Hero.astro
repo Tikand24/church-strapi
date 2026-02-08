@@ -1,0 +1,59 @@
+---
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: {
+    url: string;
+    alternativeText: string;
+  };
+  link?: {
+    link?: string;
+    text: string;
+  };
+}
+
+const STRAPI_URL = import.meta.env.STRAPI_URL || 'http://localhost:1337';
+
+const { title, description, image, link } = Astro.props;
+
+const imageUrl = image?.url.startsWith('http')
+  ? image.url
+  : `${STRAPI_URL}${image?.url}`;
+---
+
+<section
+  class="w-full px-4 md:px-20 lg:px-40 py-3 relative flex flex-col items-center justify-center h-full max-h-[65vh]"
+>
+  <div
+    class="flex flex-col items-center justify-center text-center gap-4 py-20 w-1/2 z-10"
+  >
+    <h1
+      class="text-white text-4xl md:text-6xl font-black leading-tight tracking-tight"
+    >
+      {title}
+    </h1>
+    <p class="text-lg md:text-xl text-white max-w-3xl italic">
+      {description}
+    </p>
+    {
+      link && (
+        <a
+          href={link?.link ?? '#'}
+          class="mt-6 flex min-w-[120px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 hover:scale-110 transition-all"
+        >
+          <span class="truncate">{link.text}</span>
+        </a>
+      )
+    }
+  </div>
+  <div
+    class="absolute top-0 left-0 w-full h-full px-4 md:px-20 lg:px-40 pb-10 py-3"
+  >
+    <img
+      src={imageUrl}
+      alt={image?.alternativeText}
+      class="w-full rounded-lg shadow-lg h-full brightness-50 object-cover object-center"
+    />
+  </div>
+</section>

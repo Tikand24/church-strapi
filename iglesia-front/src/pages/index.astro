@@ -1,0 +1,111 @@
+---
+import GroupPriest from '../components/GroupPriest.astro';
+import Hero from '../components/Hero.astro';
+import PublicAtention from '../components/PublicAtention.astro';
+import Schedule from '../components/Schedule.astro';
+import Layout from '../layouts/Layout.astro';
+import { fetchAPI } from '../lib/strapi';
+import type {
+	HeroProps,
+	PriestGroupProps,
+	PublicAtentionProps,
+	ScheduleProps,
+} from '../types';
+
+const JSON_POPULATE = {
+	populate: {
+		blocks: {
+			on: {
+				'hero.public-atention': {
+					populate: {
+						image: {
+							fields: ['url', 'alternativeText'],
+						},
+						enlace: {
+							populate: true,
+						},
+						ScheduleRangeItem: {
+							populate: {
+								TimeRange: {
+									populate: true,
+								},
+							},
+						},
+					},
+				},
+				'hero.slider': {
+					populate: {
+						image: {
+							fields: ['url', 'alternativeText'],
+						},
+						link: {
+							populate: true,
+						},
+					},
+				},
+				'schedule.schedule': {
+					populate: {
+						ScheduleTab: {
+							populate: {
+								Item: {
+									populate: true,
+								},
+							},
+						},
+					},
+				},
+				'priest.priest-group': {
+					populate: {
+						PriestList: {
+							populate: {
+								image: {
+									fields: ['url', 'alternativeText'],
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+};
+const homeData: any = await fetchAPI('home', JSON_POPULATE, 'data');
+
+const heroData: HeroProps = homeData.blocks.find(
+	(block: any) => block.__component === 'hero.slider',
+);
+
+const scheduleData: ScheduleProps = homeData.blocks.find(
+	(block: any) => block.__component === 'schedule.schedule',
+);
+const publicAtentionData: PublicAtentionProps = homeData.blocks.find(
+	(block: any) => block.__component === 'hero.public-atention',
+);
+const priestGroupData: PriestGroupProps = homeData.blocks.find(
+	(block: any) => block.__component === 'priest.priest-group',
+);
+---
+
+<Layout>
+	<section class="bg-background-light">
+		{
+			heroData && (
+				<Hero
+					title={heroData.Title}
+					description={heroData.description}
+					link={heroData.link}
+					image={heroData.image}
+				/>
+			)
+		}
+	</section>
+	<section class="bg-background-light">
+		<Schedule {...scheduleData} />
+	</section>
+	<section class="bg-primary/10">
+		<PublicAtention {...publicAtentionData} />
+	</section>
+	<section class="bg-background-light">
+		<GroupPriest {...priestGroupData} />
+	</section>
+</Layout>

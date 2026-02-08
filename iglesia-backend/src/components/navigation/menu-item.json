@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_navigation_menu_items",
+  "info": {
+    "displayName": "Menu Item"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false,
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "required": true
+    }
+  },
+  "config": {}
+}

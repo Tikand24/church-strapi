@@ -1,0 +1,46 @@
+{
+  "collectionName": "components_hero_public_atentions",
+  "info": {
+    "displayName": "Public Atention",
+    "icon": "emotionHappy"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Atención al público",
+      "required": true
+    },
+    "Subtitle": {
+      "type": "string",
+      "default": "Despacho parroquial",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "default": "Visítanos para trámites de sacramentos, certificados o intención de misas.",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "videos"
+      ]
+    },
+    "enlace": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false,
+      "required": true
+    },
+    "ScheduleRangeItem": {
+      "type": "component",
+      "component": "schedule.schedule-range-item",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_priest_priest_groups",
+  "info": {
+    "displayName": "PriestGroup",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Nuestros Sacerdotes",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "default": "Nuestro dedicado grupo de sacerdotes está aquí para guiarte en tu camino espiritual y ofrecer apoyo a nuestra comunidad.",
+      "required": true
+    },
+    "PriestList": {
+      "type": "component",
+      "component": "priest.priest",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

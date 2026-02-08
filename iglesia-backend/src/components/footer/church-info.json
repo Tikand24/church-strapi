@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_footer_church_infos",
+  "info": {
+    "displayName": "Church Info"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  },
+  "config": {}
+}

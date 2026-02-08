@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_schedule_schedule_groups",
+  "info": {
+    "displayName": "ScheduleGroup",
+    "icon": "calendar"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "default": "Domingo",
+      "required": true
+    },
+    "Item": {
+      "type": "component",
+      "component": "schedule.schedule-item",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

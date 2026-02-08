@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_priest_priests",
+  "info": {
+    "displayName": "Priest",
+    "icon": "emotionHappy"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "default": "Padre XYZ",
+      "required": true
+    },
+    "serviceInitialDate": {
+      "type": "date",
+      "required": true,
+      "default": "2026-01-01"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "grade": {
+      "type": "enumeration",
+      "required": true,
+      "default": "Vicario",
+      "enum": [
+        "Parroco",
+        "Vicario",
+        "Seminarista",
+        "Diacono"
+      ]
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_schedule_time_ranges",
+  "info": {
+    "displayName": "TimeRange",
+    "icon": "clock"
+  },
+  "options": {},
+  "attributes": {
+    "TimeStart": {
+      "type": "time"
+    },
+    "TimeEnd": {
+      "type": "time"
+    }
+  },
+  "config": {}
+}

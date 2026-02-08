@@ -1,0 +1,83 @@
+---
+import imagePriest1 from '../assets/priest1.png';
+import { PriestGrade } from '../types';
+import type { PriestGroupProps } from '../types';
+
+interface Props extends PriestGroupProps {}
+
+const { title, description, PriestList } = Astro.props;
+PriestList.forEach((priest) => {
+  if (!priest.image.url.startsWith('http')) {
+    priest.image.url = `${import.meta.env.STRAPI_URL || 'http://localhost:1337'}${priest.image.url}`;
+  }
+});
+
+const colorPriestGrade = {
+  [PriestGrade.PARISH_PRIEST]: {
+    border: 'border-accent-gold/50 group-hover:border-accent-gold',
+    text: 'bg-accent-gold',
+  },
+  [PriestGrade.VICAR]: {
+    border: 'border-blue-500/50 group-hover:border-blue-500',
+    text: 'bg-blue-500',
+  },
+  [PriestGrade.SEMINARIAN]: {
+    border: 'border-green-500/50 group-hover:border-green-500',
+    text: 'bg-green-500',
+  },
+  [PriestGrade.DEACON]: {
+    border: 'border-purple-500/50 group-hover:border-purple-500',
+    text: 'bg-purple-500',
+  },
+};
+
+const getPriestGradeColor = (grade: PriestGrade) => {
+  return (
+    colorPriestGrade[grade] || {
+      border: 'border-gray-500/50 group-hover:border-gray-500',
+      text: 'bg-gray-500',
+    }
+  );
+};
+---
+
+<section class="max-w-7xl mx-auto w-full px-4 md:px-20 lg:px-40 py-12">
+  <div class="flex flex-col">
+    <div class="flex flex-col items-center justify-center gap-4 text-center">
+      <h5 class="text-3xl font-black">{title}</h5>
+      <p class="text-base text-primary-text">
+        {description}
+      </p>
+    </div>
+    <div class="flex justify-between">
+      {
+        PriestList &&
+          PriestList.map((priest) => (
+            <div class="flex flex-col items-center justify-start text-center mt-8 w-full group">
+              <div class="relative">
+                <div
+                  class={`size-48 rounded-full border-4 ${getPriestGradeColor(priest.grade).border} transition-all duration-300 overflow-hidden`}
+                >
+                  <img
+                    src={priest.image.url}
+                    alt={priest.image.alternativeText}
+                    class="w-full h-full object-cover grayscale-100 group-hover:grayscale-0 transition-all duration-300"
+                  />
+                </div>
+                <div
+                  class={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${getPriestGradeColor(priest.grade).text} text-white px-4 py-1 rounded-full text-xs font-bold shadow-md`}
+                >
+                  {priest.grade}
+                </div>
+              </div>
+              <h6 class="text-xl font-semibold mt-4">{priest.name}</h6>
+              <p class="text-sm text-primary-text italic">
+                Servicio desde{' '}
+                {new Date(priest.serviceInitialDate).getFullYear()}
+              </p>
+            </div>
+          ))
+      }
+    </div>
+  </div>
+</section>

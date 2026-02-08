@@ -1,0 +1,85 @@
+---
+import imagePlanta from '../assets/planta.png';
+import { formateador } from '../lib/utils.ts';
+import type { PublicAtentionProps } from '../types';
+
+interface Props extends PublicAtentionProps {}
+const STRAPI_URL = import.meta.env.STRAPI_URL || 'http://localhost:1337';
+
+const { title, Subtitle, description, image, enlace, ScheduleRangeItem } =
+  Astro.props;
+let imageUrl:any = null;
+if (image && image.length > 0) {
+  image.forEach((img) => {
+    imageUrl = img.url.startsWith('http')
+      ? img
+      : {
+          url: `${STRAPI_URL}${img.url}`,
+          alternativeText: img.alternativeText,
+        };
+  });
+}
+---
+
+<section class="max-w-7xl mx-auto w-full px-4 md:px-20 lg:px-40 py-12">
+  <div class="flex justify-between">
+    <div class="flex flex-col gap-4">
+      <h6
+        class="w-fit text-sm font-bold mb-6 tracking-widest bg-accent-gold/20 text-accent-gold py-1.5 px-4 rounded-md uppercase"
+      >
+        {title}
+      </h6>
+      <h4 class="text-3xl font-bold">{Subtitle}</h4>
+      <p class="text-base text-primary-text">
+        {description}
+      </p>
+      {
+        ScheduleRangeItem &&
+          ScheduleRangeItem.map((item) => (
+            <div>
+              <div class="flex gap-4 items-center mt-4">
+                <div class="bg-white rounded-lg p-2" set:html={item.icon} />
+                <div class="flex flex-col">
+                  <h5 class="text-base font-bold">{item.description}</h5>
+                  <div class="flex gap-2">
+                    {item.TimeRange && item.TimeRange.map((time) => (
+                      <h6 class="text-sm uppercase text-primary-text">
+                        {formateador.format(
+                          new Date(`1970-01-01 ${time.TimeStart}`),
+                        )}{' '}
+                        -{' '}
+                        {formateador.format(
+                          new Date(`1970-01-01 ${time.TimeEnd}`),
+                        )}
+                      </h6>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+      }
+      {
+        enlace && (
+          <a
+            href={enlace?.link ?? '#'}
+            class="mt-6 flex w-fit cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 hover:scale-110 transition-all"
+          >
+            <span class="truncate">{enlace.text}</span>
+          </a>
+        )
+      }
+    </div>
+    <div class="max-w-1/2">
+      {
+        imageUrl && (
+          <img
+            src={imageUrl.url}
+            alt={imageUrl.alternativeText}
+            class="border-4 max-h-100 border-white rounded-2xl"
+          />
+        )
+      }
+    </div>
+  </div>
+</section>

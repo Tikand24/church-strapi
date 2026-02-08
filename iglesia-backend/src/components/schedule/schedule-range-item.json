@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_schedule_schedule_range_items",
+  "info": {
+    "displayName": "ScheduleRangeItem",
+    "icon": "information"
+  },
+  "options": {},
+  "attributes": {
+    "description": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "richtext"
+    },
+    "TimeRange": {
+      "type": "component",
+      "component": "schedule.time-range",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

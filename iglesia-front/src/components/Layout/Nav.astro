@@ -1,0 +1,68 @@
+---
+import { fetchAPI } from '../../lib/strapi';
+import { getUrlImage } from '../../lib/utils';
+import type { NavigationStrapi } from '../../types';
+
+const navData: NavigationStrapi = await fetchAPI('navigation', {
+  populate: {
+    logo: {
+      populate: '*'
+    },
+    menuItems: {
+      populate: '*'
+    },
+    ctaButton: {
+      populate: '*'
+    }
+  }
+}, 'data');
+
+const logoIconUrl = getUrlImage(navData?.logo?.icon?.url); 
+  
+---
+
+<header
+  class="sticky top-0 z-50 w-full border-b border-solid border-blue-50 bg-background-light/95 backdrop-blur-sm px-4 md:px-20 lg:px-40 py-3"
+>
+  <div class="flex items-center justify-between whitespace-nowrap">
+    <div class="flex items-center gap-4 text-primary">
+      {logoIconUrl && (
+        <div class="size-8">
+          <img src={logoIconUrl} alt="Church logo" class="w-full h-full" />
+        </div>
+      )}
+      <div class="flex flex-col">
+        <h2 class="text-black text-lg font-bold leading-tight tracking-tight">
+          {navData?.logo?.churchName || 'Sagrada familia de'}
+        </h2>
+        <p class="text-[10px] uppercase tracking-widest text-accent-gold font-bold">
+          {navData?.logo?.locationName || 'Fusagasugá'}
+        </p>
+      </div>
+    </div>
+    <div class="flex flex-1 justify-end gap-8 items-center">
+      <nav class="hidden md:flex items-center gap-9">
+        {navData?.menuItems?.sort((a: any, b: any) => a.order - b.order).map((item: any) => (
+          <a
+            class="capitalize text-black text-sm font-medium hover:text-primary transition-colors"
+            href={item.url}
+            target={item.url.redirectOutSide ? '_blank' : '_self'}
+            rel={item.url.redirectOutSide ? 'noopener noreferrer' : ''}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      {navData?.ctaButton && (
+        <a
+          href={navData.ctaButton.url.link}
+          target={navData.ctaButton.url.redirectOutside ? '_blank' : '_self'}
+          rel={navData.ctaButton.url.redirectOutside ? 'noopener noreferrer' : ''}
+          class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 transition-all"
+        >
+          <span class="truncate">{navData.ctaButton.url.text}</span>
+        </a>
+      )}
+    </div>
+  </div>
+</header>

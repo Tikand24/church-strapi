@@ -1,0 +1,33 @@
+{
+  "kind": "singleType",
+  "collectionName": "navigations",
+  "info": {
+    "singularName": "navigation",
+    "pluralName": "navigations",
+    "displayName": "navigation"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "logo": {
+      "type": "component",
+      "component": "navigation.logo",
+      "repeatable": false,
+      "required": true
+    },
+    "menuItems": {
+      "type": "component",
+      "component": "navigation.menu-item",
+      "repeatable": true,
+      "required": true,
+      "min": 1
+    },
+    "ctaButton": {
+      "type": "component",
+      "component": "navigation.cta-button",
+      "repeatable": false
+    }
+  }
+}

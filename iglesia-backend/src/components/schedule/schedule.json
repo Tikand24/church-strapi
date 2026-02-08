@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_schedule_schedules",
+  "info": {
+    "displayName": "Schedule",
+    "icon": "calendar"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "default": "Horarios de eucaristia",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "default": "Únete a nuestra celebración comunitaria",
+      "required": true
+    },
+    "ScheduleTab": {
+      "type": "component",
+      "component": "schedule.schedule-group",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

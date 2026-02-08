@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_schedule_schedule_items",
+  "info": {
+    "displayName": "ScheduleItem",
+    "icon": "clock"
+  },
+  "options": {},
+  "attributes": {
+    "time": {
+      "type": "time"
+    },
+    "description": {
+      "type": "string"
+    },
+    "Icon": {
+      "type": "richtext",
+      "required": false
+    }
+  },
+  "config": {}
+}
