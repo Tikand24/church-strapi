@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_sacraments_requierements",
+  "info": {
+    "displayName": "requierements",
+    "icon": "information"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "config": {}
+}

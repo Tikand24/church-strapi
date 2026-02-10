@@ -3,6 +3,7 @@ export type * from './footer';
 export type * from './hero';
 export type * from './navigation';
 export type * from './priest';
+export type * from './sacrament';
 export type * from './schedule';
 
 export enum PriestGrade {

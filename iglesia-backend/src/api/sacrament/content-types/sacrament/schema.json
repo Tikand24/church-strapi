@@ -1,0 +1,33 @@
+{
+  "kind": "singleType",
+  "collectionName": "sacraments",
+  "info": {
+    "singularName": "sacrament",
+    "pluralName": "sacraments",
+    "displayName": "Sacraments"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "sacramentList": {
+      "type": "component",
+      "component": "sacraments.sacrament",
+      "repeatable": true
+    },
+    "blocks": {
+      "type": "dynamiczone",
+      "components": [
+        "more-info.more-info"
+      ]
+    }
+  }
+}

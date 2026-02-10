@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SacramentCard from '../components/SacramentCard.astro';
+import MoreInfo from '../components/MoreInfo.astro';
+import { fetchAPI } from '../lib/strapi';
+import type { SacramentPage } from '../types';
+
+let pageData: SacramentPage | null = null;
+const JSON_POPULATE = {
+  populate: {
+    sacramentList: {
+      populate: {
+        image: {
+          fields: ['url', 'alternativeText']
+        },
+        requirements: {
+          populate: true
+        }
+      }
+    },
+		blocks: {
+			on: {
+				'more-info.more-info': {
+					populate: '*'
+        }
+      }
+    }
+  },
+};
+try {
+  pageData = await fetchAPI<SacramentPage>('sacrament', JSON_POPULATE, 'data');
+} catch (error) {
+  console.log('Strapi not available, using default sacraments data');
+}
+
+const sacramentList = pageData?.sacramentList || [];
+const pageTitle = pageData?.title || 'Sacramentos';
+const pageDescription = pageData?.description || 'Los siete sacramentos son signos eficaces de la gracia, instituidos por Cristo y confiados a la Iglesia';
+const blocks = pageData?.blocks || [];
+---
+
+<Layout title={pageTitle}>
+  <main class="bg-background-light min-h-screen">
+    <section class="w-full px-4 md:px-20 lg:px-40 py-16">
+      <div class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-primary-text mb-4">
+          {pageTitle}
+        </h1>
+        <p class="text-lg text-primary-text max-w-2xl">
+          {pageDescription}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {sacramentList.map((sacrament) => (
+          <SacramentCard sacrament={sacrament} />
+        ))}
+      </div>
+    </section>
+
+    {blocks.map((block) => (
+      block.__component === 'more-info.more-info' && (
+        <MoreInfo 
+          title={block.title}
+          description={block.description}
+          linkContact={block.linkContact}
+        />
+      )
+    ))}
+  </main>
+</Layout>

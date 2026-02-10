@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_more_info_more_infos",
+  "info": {
+    "displayName": "More Info"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "linkContact": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

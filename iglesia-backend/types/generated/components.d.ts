@@ -79,6 +79,18 @@ export interface HeroSlider extends Struct.ComponentSchema {
   };
 }
 
+export interface MoreInfoMoreInfo extends Struct.ComponentSchema {
+  collectionName: 'components_more_info_more_infos';
+  info: {
+    displayName: 'More Info';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    linkContact: Schema.Attribute.Component<'shared.link', true>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface NavigationCtaButton extends Struct.ComponentSchema {
   collectionName: 'components_navigation_cta_buttons';
   info: {
@@ -154,6 +166,33 @@ export interface PriestPriestGroup extends Struct.ComponentSchema {
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Nuestros Sacerdotes'>;
+  };
+}
+
+export interface SacramentsRequierements extends Struct.ComponentSchema {
+  collectionName: 'components_sacraments_requierements';
+  info: {
+    displayName: 'requierements';
+    icon: 'information';
+  };
+  attributes: {
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SacramentsSacrament extends Struct.ComponentSchema {
+  collectionName: 'components_sacraments_sacraments';
+  info: {
+    displayName: 'Sacrament';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    iconName: Schema.Attribute.RichText &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 7 4 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9l4-2"/><path d="M14 22v-4a2 2 0 0 0-4 0v4"/><path d="M18 22V5l-6-3-6 3v17"/><path d="M12 7v5"/><path d="M10 9h4"/></svg>'>;
+    image: Schema.Attribute.Media<'images'>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    requirements: Schema.Attribute.Component<'sacraments.requierements', true>;
   };
 }
 
@@ -312,11 +351,14 @@ declare module '@strapi/strapi' {
       'footer.location': FooterLocation;
       'hero.public-atention': HeroPublicAtention;
       'hero.slider': HeroSlider;
+      'more-info.more-info': MoreInfoMoreInfo;
       'navigation.cta-button': NavigationCtaButton;
       'navigation.logo': NavigationLogo;
       'navigation.menu-item': NavigationMenuItem;
       'priest.priest': PriestPriest;
       'priest.priest-group': PriestPriestGroup;
+      'sacraments.requierements': SacramentsRequierements;
+      'sacraments.sacrament': SacramentsSacrament;
       'schedule.schedule': ScheduleSchedule;
       'schedule.schedule-group': ScheduleScheduleGroup;
       'schedule.schedule-item': ScheduleScheduleItem;

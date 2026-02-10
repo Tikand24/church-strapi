@@ -1,0 +1,55 @@
+---
+import { getUrlImage } from '../lib/utils';
+import type { Sacrament } from '../types';
+
+interface Props {
+  sacrament: Sacrament;
+}
+
+const { sacrament } = Astro.props;
+
+const imageUrl = getUrlImage(sacrament.image?.url);
+---
+
+<article class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+  {imageUrl ? (
+    <div class="h-48 overflow-hidden">
+      <img
+        src={imageUrl}
+        alt={sacrament.image.alternativeText || sacrament.name}
+        class="w-full h-full object-cover"
+      />
+    </div>
+  ) : (
+    <div class="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+      <div class="text-primary w-16 h-16" set:html={sacrament.iconName} />
+    </div>
+  )}
+  
+  <div class="p-6">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="text-primary w-6 h-6" set:html={sacrament.iconName} />
+      <h2 class="text-xl font-bold text-primary">
+        {sacrament.name}
+      </h2>
+    </div>
+    
+    <p class="text-primary-text mb-4 text-sm leading-relaxed">
+      {sacrament.description}
+    </p>
+    
+    <div class="border-t border-gray-200 pt-4">
+      <h3 class="text-sm font-semibold text-primary-text mb-2">
+        Requisitos:
+      </h3>
+      <ul class="space-y-1.5">
+        {sacrament.requirements.map((requirement) => (
+          <li class="flex items-start gap-2 text-sm text-gray-600">
+            <span class="text-primary-text mt-0.5">•</span>
+            <span>{requirement.title}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</article>

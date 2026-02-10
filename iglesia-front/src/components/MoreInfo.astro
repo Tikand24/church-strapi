@@ -1,0 +1,40 @@
+---
+import type { MoreInfoLink } from '../types';
+
+interface Props {
+  title: string;
+  description: string;
+  linkContact: MoreInfoLink[];
+}
+
+const { title, description, linkContact } = Astro.props;
+---
+
+<section class="w-full px-4 md:px-20 lg:px-40 py-16 bg-background-light border-t border-gray-200">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold text-primary-text mb-4">
+      {title}
+    </h2>
+    <p class="text-lg text-primary-text mb-8 max-w-2xl mx-auto">
+      {description}
+    </p>
+    
+    {linkContact && linkContact.length > 0 && (
+      <div class="flex flex-wrap justify-center gap-4">
+        {linkContact.map((link) => (
+          <a
+            href={link.link}
+            target={link.redirectOutside ? '_blank' : undefined}
+            rel={link.redirectOutside ? 'noopener noreferrer' : undefined}
+            class="flex items-center gap-2 cursor-pointer rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 hover:scale-105 transition-all"
+          >
+            {link.iconSvg && (
+              <span class="w-5 h-5" set:html={link.iconSvg} />
+            )}
+            <span class="truncate">{link.text}</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
