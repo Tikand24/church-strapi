@@ -4,6 +4,7 @@ export type * from "./hero";
 export type * from "./navigation";
 export type * from "./priest";
 export type * from "./schedule";
+export type * from "./news";
 
 export enum PriestGrade {
   PARISH_PRIEST = 'Parroco',

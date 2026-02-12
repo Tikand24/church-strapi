@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "liturgical_events",
+  "info": {
+    "singularName": "liturgical-event",
+    "pluralName": "liturgical-events",
+    "displayName": "Liturgical Event"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "eventType": {
+      "type": "enumeration",
+      "enum": [
+        "misa",
+        "adoracion",
+        "sacramento",
+        "celebracion especial"
+      ]
+    },
+    "color": {
+      "type": "enumeration",
+      "enum": [
+        "verde",
+        "morado",
+        "blanco",
+        "rojo"
+      ]
+    },
+    "recurrence": {
+      "type": "enumeration",
+      "enum": [
+        "Una vez",
+        "Diario",
+        "Semanal",
+        "Mensual"
+      ]
+    },
+    "location": {
+      "type": "string"
+    },
+    "eventDate": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "Lunes",
+        "Martes",
+        "Miercoles",
+        "Jueves",
+        "Viernes",
+        "Sabado",
+        "Domingo"
+      ]
+    },
+    "description": {
+      "type": "blocks"
+    }
+  }
+}

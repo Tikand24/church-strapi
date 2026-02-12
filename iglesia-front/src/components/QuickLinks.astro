@@ -1,0 +1,59 @@
+---
+import type { QuickLinkItem } from '../types/news-page';
+
+interface Props {
+  title?: string;
+  links?: QuickLinkItem[];
+}
+
+const { title = 'Enlaces rápidos', links = [] } = Astro.props;
+const validLinks = links.filter((link) => link?.text && link?.link);
+---
+
+{validLinks.length > 0 && (
+  <section class="rounded-2xl bg-primary/20 p-6 text-primary-text shadow-lg">
+    <div class="mb-4">
+      <h2 class="text-2xl font-semibold text-primary">Enlaces rapidos</h2>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      {validLinks.map((item) => {
+        const isExternal = Boolean(item.redirectOutside);
+        return (
+          <a
+            href={item.link}
+            class="group flex items-center gap-3 px-4 py-3 rounded-2xl text-primary-text transition hover:translate-x-1 hover:bg-white/70"
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noreferrer noopener' : undefined}
+            data-id={item.id}
+          >
+            {item.iconSvg ? (
+              <span
+                class="flex size-6 items-center justify-center text-primary"
+                set:html={item.iconSvg}
+              />
+            ) : (
+              <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/20 text-primary">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  class="h-6 w-6"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h12v12H6z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 9h6v6H9z" />
+                </svg>
+              </span>
+            )}
+
+            <span class="flex-1 text-base font-semibold leading-tight text-primary-text">
+              {item.text.trim()}
+            </span>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+)}

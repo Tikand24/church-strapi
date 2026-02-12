@@ -5,7 +5,7 @@ export interface ScheduleItem {
 }
 export interface ScheduleGroup {
   Title: string;
-  item?: ScheduleItem[];
+  Item?: ScheduleItem[];
 }
 export interface Schedule{
   Title: string;

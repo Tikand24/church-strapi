@@ -1,0 +1,196 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { fetchAPI } from '../lib/strapi';
+import NewsCard from '../components/NewsCard.astro';
+import NewsGridControls from '../components/NewsGridControls.astro';
+import LiturgicalEventsCarousel from '../components/LiturgicalEventsCarousel.astro';
+import QuickLinks from '../components/QuickLinks.astro';
+import NewsletterSubscribe from '../components/NewsletterSubscribe.astro';
+import type { Article, ArticleListResponse } from '../types/news';
+import type { LiturgicalEvent, LiturgicalEventListResponse, LiturgicalWeekday } from '../types/liturgical-events';
+import type { NewsPageResponse, QuickLinkItem } from '../types/news-page';
+
+const populateQuery = {
+  populate: {
+    cover: {
+      fields: ['url', 'alternativeText'],
+    },
+    author: {
+      populate: {
+        avatar: {
+          fields: ['url', 'alternativeText'],
+        },
+      },
+    },
+    category: {
+      fields: ['name', 'slug'],
+    },
+  },
+  sort: ['publishedAt:desc'],
+};
+
+let articles: Article[] = [];
+let liturgicalEvents: LiturgicalEvent[] = [];
+let quickLinksTitle = '';
+let quickLinksData: QuickLinkItem[] = [];
+
+try {
+  const response = await fetchAPI<ArticleListResponse>('articles', populateQuery);
+  articles = response?.data || [];
+} catch (error) {
+  console.error('No se pudieron cargar las noticias', error);
+}
+
+try {
+  const eventResponse = await fetchAPI<LiturgicalEventListResponse>('liturgical-events', {
+    sort: ['eventDate:asc'],
+  });
+  liturgicalEvents = eventResponse?.data || [];
+} catch (error) {
+  console.error('No se pudieron cargar los eventos litúrgicos', error);
+}
+
+try {
+  const quickLinksResponse = await fetchAPI<NewsPageResponse>('news-page', {
+    populate: {
+      quickLinks: {
+        populate:true
+      },
+    },
+  });
+  const newsPage = quickLinksResponse?.data;
+  quickLinksTitle = newsPage?.title || 'Enlaces rápidos';
+  quickLinksData = (newsPage?.quickLinks || []) as QuickLinkItem[];
+} catch (error) {
+  console.error('No se pudieron cargar los enlaces rápidos', error);
+}
+
+const weekdayOrder: LiturgicalWeekday[] = [
+  'Lunes',
+  'Martes',
+  'Miercoles',
+  'Jueves',
+  'Viernes',
+  'Sabado',
+  'Domingo',
+];
+
+const normalizeWeekday = (day: string) =>
+  day
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[^a-z]/g, '');
+
+const normalizedWeekdayOrder = weekdayOrder.map((weekday) => normalizeWeekday(weekday));
+const todayFormatted = new Intl.DateTimeFormat('es-CO', { weekday: 'long' }).format(new Date());
+const todayNormalized = normalizeWeekday(todayFormatted);
+
+const todayWeekdayIndex = normalizedWeekdayOrder.indexOf(todayNormalized);
+const todayWeekday = todayWeekdayIndex >= 0 ? weekdayOrder[todayWeekdayIndex] : 'Lunes';
+
+const eventsSorted = [...liturgicalEvents].sort((a, b) => {
+  const orderA = weekdayOrder.indexOf(a.eventDate);
+  const orderB = weekdayOrder.indexOf(b.eventDate);
+  const safeOrderA = orderA >= 0 ? orderA : weekdayOrder.length;
+  const safeOrderB = orderB >= 0 ? orderB : weekdayOrder.length;
+  return safeOrderA - safeOrderB;
+});
+const todayIndex = eventsSorted.findIndex((event) => event.eventDate === todayWeekday);
+const initialEventIndex = todayIndex >= 0 ? todayIndex : 0;
+
+const featuredArticle = articles.find((article) => article.isFeatured) || null;
+const otherArticles = featuredArticle
+  ? articles.filter((article) => article.id !== featuredArticle.id)
+  : articles;
+---
+
+<Layout title="Noticias">
+  <main class="bg-background-light min-h-screen">
+     <section class="w-full px-4 md:px-20 lg:px-40 py-16">
+      <div class="mb-12 flex flex-col gap-4">
+        <p class="text-sm uppercase tracking-[0.35em] text-accent-gold font-semibold">Actualidad parroquial</p>
+        <h1 class="text-4xl md:text-5xl font-bold text-primary-text">
+          Noticias y avisos parroquiales
+        </h1>
+        <p class="max-w-2xl text-lg text-primary-text/80">
+          Mantente al tanto de lo que sucede en nuestra comunidad: celebraciones, testimonios, iniciativas y reflexiones para vivir la fe día a día.
+        </p>
+      </div>
+
+      {featuredArticle ? (
+        <div class="mb-16">
+          <NewsCard article={featuredArticle} variant="featured" />
+        </div>
+      ) : (
+        <div class="mb-16 rounded-2xl border border-dashed border-primary/20 bg-white/60 p-10 text-center text-primary-text">
+          Pronto tendremos noticias para compartir.
+        </div>
+      )}
+
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_400px]">
+        <div class="order-2 flex flex-col gap-6 lg:order-1">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <h2 class="text-2xl font-semibold text-primary-text">Todas las noticias</h2>
+            {otherArticles.length > 0 && <NewsGridControls isSingleColumn={false} />}
+          </div>
+
+          {otherArticles.length > 0 ? (
+            <div class="news-grid grid grid-cols-1 gap-8 transition-all md:grid-cols-2" data-grid>
+              {otherArticles.map((article) => (
+                <NewsCard article={article} />
+              ))}
+            </div>
+          ) : (
+            <div class="rounded-2xl border border-primary/10 bg-white/70 p-8 text-center text-primary-text">
+              Estamos preparando más noticias para compartir contigo.
+            </div>
+          )}
+        </div>
+
+        <aside class="order-1 flex flex-col gap-10 lg:order-2">
+          <LiturgicalEventsCarousel events={eventsSorted} initialIndex={initialEventIndex} />
+          <QuickLinks title={quickLinksTitle} links={quickLinksData} />
+          <NewsletterSubscribe />
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const toggleBtn = document.querySelector('[data-grid-toggle]') as HTMLButtonElement | null;
+    const toggleIconSingle = toggleBtn?.querySelector('[data-icon="single"]') as SVGSVGElement | null;
+    const toggleIconDouble = toggleBtn?.querySelector('[data-icon="double"]') as SVGSVGElement | null;
+    const toggleLabel = toggleBtn?.querySelector('[data-grid-label]') as HTMLSpanElement | null;
+    const grid = document.querySelector('[data-grid]') as HTMLDivElement | null;
+
+    const syncState = () => {
+      if (!grid || !toggleBtn) return;
+      const isSingle = grid.classList.contains('grid-cols-1');
+      toggleBtn.classList.toggle('bg-primary', isSingle);
+      toggleBtn.classList.toggle('text-white', isSingle);
+      toggleBtn.setAttribute('aria-pressed', String(isSingle));
+      toggleBtn.setAttribute(
+        'aria-label',
+        isSingle ? 'Cambiar a vista de dos columnas' : 'Cambiar a vista de una columna'
+      );
+      if (toggleIconSingle && toggleIconDouble) {
+        toggleIconSingle.classList.toggle('hidden', !isSingle);
+        toggleIconDouble.classList.toggle('hidden', isSingle);
+      }
+      if (toggleLabel) {
+        toggleLabel.textContent = isSingle ? 'Vista de 1 columna' : 'Vista de 2 columnas';
+      }
+    };
+
+    if (grid && toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        grid.classList.toggle('grid-cols-1');
+        grid.classList.toggle('md:grid-cols-2');
+        syncState();
+      });
+    }
+
+    grid?.classList.add('grid-cols-1', 'md:grid-cols-2');
+    syncState();
+  </script>
+</Layout>

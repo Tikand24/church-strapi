@@ -1,0 +1,48 @@
+---
+interface Props {
+  label?: string;
+  isSingleColumn: boolean;
+  buttonId?: string;
+}
+
+const { label = 'Diseño', isSingleColumn, buttonId = 'news-grid-toggle' }: Props = Astro.props;
+---
+
+<div class="flex items-center gap-3">
+  <span class="text-sm font-semibold text-primary-text">{label}</span>
+  <button
+    id={buttonId}
+    type="button"
+    class={`flex items-center gap-1 rounded-full border px-4 py-1 text-sm font-semibold transition ${
+      isSingleColumn
+        ? 'border-primary bg-primary text-white'
+        : 'border-primary/30 text-primary hover:border-primary'
+    }`}
+    data-grid-toggle
+    aria-pressed={isSingleColumn}
+    aria-label={isSingleColumn ? 'Cambiar a vista de dos columnas' : 'Cambiar a vista de una columna'}
+  >
+    <span aria-hidden="true" class="relative flex h-5 w-5 items-center justify-center text-current">
+      <svg
+        data-icon="single"
+        viewBox="0 0 20 20"
+        fill="none"
+        class={`h-full w-full transition-opacity ${isSingleColumn ? 'opacity-100' : 'hidden'}`}
+      >
+        <rect x="3" y="3" width="14" height="14" rx="3" fill="currentColor" class="opacity-90" />
+      </svg>
+      <svg
+        data-icon="double"
+        viewBox="0 0 20 20"
+        fill="none"
+        class={`h-full w-full transition-opacity ${isSingleColumn ? 'hidden' : 'opacity-100'}`}
+      >
+        <rect x="3" y="3" width="6" height="14" rx="2" fill="currentColor" class="opacity-90" />
+        <rect x="11" y="3" width="6" height="14" rx="2" fill="currentColor" class="opacity-60" />
+      </svg>
+    </span>
+    <span class="sr-only" data-grid-label>
+      {isSingleColumn ? 'Vista de 1 columna' : 'Vista de 2 columnas'}
+    </span>
+  </button>
+</div>
