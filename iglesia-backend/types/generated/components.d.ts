@@ -1,5 +1,54 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface ContactContactForm extends Struct.ComponentSchema {
+  collectionName: 'components_contact_contact_forms';
+  info: {
+    displayName: 'Contact Form';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    subjectList: Schema.Attribute.Component<'shared.enum-list', true>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ContactContactInfo extends Struct.ComponentSchema {
+  collectionName: 'components_contact_contact_infos';
+  info: {
+    displayName: 'Contact info';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    infoLinks: Schema.Attribute.Component<'shared.link', true>;
+    socialLinks: Schema.Attribute.Component<'shared.link', true>;
+    subtitle: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ContactMapContactInfo extends Struct.ComponentSchema {
+  collectionName: 'components_contact_map_contact_infos';
+  info: {
+    displayName: 'Map Contact Info';
+  };
+  attributes: {
+    address: Schema.Attribute.String & Schema.Attribute.Required;
+    directionsLink: Schema.Attribute.Component<'shared.link', false>;
+    embedUrl: Schema.Attribute.Text & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ContactSliderComunity extends Struct.ComponentSchema {
+  collectionName: 'components_contact_slider_comunities';
+  info: {
+    displayName: 'Slider Comunity';
+  };
+  attributes: {
+    slides: Schema.Attribute.Component<'shared.slider-comunity', true>;
+  };
+}
+
 export interface FooterChurchInfo extends Struct.ComponentSchema {
   collectionName: 'components_footer_church_infos';
   info: {
@@ -265,6 +314,16 @@ export interface ScheduleTimeRange extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedEnumList extends Struct.ComponentSchema {
+  collectionName: 'components_shared_enum_lists';
+  info: {
+    displayName: 'Enum List';
+  };
+  attributes: {
+    value: Schema.Attribute.String;
+  };
+}
+
 export interface SharedLink extends Struct.ComponentSchema {
   collectionName: 'components_shared_links';
   info: {
@@ -343,9 +402,27 @@ export interface SharedSlider extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedSliderComunity extends Struct.ComponentSchema {
+  collectionName: 'components_shared_slider_comunities';
+  info: {
+    displayName: 'Slider comunity';
+  };
+  attributes: {
+    description: Schema.Attribute.String & Schema.Attribute.Required;
+    media: Schema.Attribute.Media<'images' | 'files' | 'videos'> &
+      Schema.Attribute.Required;
+    subtile: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'contact.contact-form': ContactContactForm;
+      'contact.contact-info': ContactContactInfo;
+      'contact.map-contact-info': ContactMapContactInfo;
+      'contact.slider-comunity': ContactSliderComunity;
       'footer.church-info': FooterChurchInfo;
       'footer.contact-info': FooterContactInfo;
       'footer.location': FooterLocation;
@@ -364,12 +441,14 @@ declare module '@strapi/strapi' {
       'schedule.schedule-item': ScheduleScheduleItem;
       'schedule.schedule-range-item': ScheduleScheduleRangeItem;
       'schedule.time-range': ScheduleTimeRange;
+      'shared.enum-list': SharedEnumList;
       'shared.link': SharedLink;
       'shared.media': SharedMedia;
       'shared.quote': SharedQuote;
       'shared.rich-text': SharedRichText;
       'shared.seo': SharedSeo;
       'shared.slider': SharedSlider;
+      'shared.slider-comunity': SharedSliderComunity;
     }
   }
 }

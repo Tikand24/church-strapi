@@ -1,0 +1,165 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MapCard from '../components/contact/MapCard.astro';
+import ContactFormCard from '../components/contact/ContactFormCard.astro';
+import ContactInfoCard from '../components/contact/ContactInfoCard.astro';
+import OfficeHoursCard from '../components/contact/OfficeHoursCard.astro';
+import CommunityCarousel from '../components/contact/CommunityCarousel.astro';
+import { fetchAPI } from '../lib/strapi';
+import type {
+  ContactPageResponse,
+  ContactPageBlock,
+  MapContactInfoBlock,
+  ContactInfoBlock,
+  SliderCommunityBlock,
+  OfficeHoursBlock,
+  ContactFormBlock,
+} from '../types';
+
+// Build the complex populate query for the contact page
+const contactPageQuery = {
+  populate: {
+    blocks: {
+      on: {
+        'contact.map-contact-info': {
+          populate: {
+            directionsLink: { populate: true },
+          },
+        },
+        'contact.contact-info': {
+          populate: {
+            infoLinks: { populate: true },
+            socialLinks: { populate: true },
+          },
+        },
+        'hero.public-atention': {
+          populate: {
+            enlace: { populate: true },
+            ScheduleRangeItem: {
+              populate: {
+                TimeRange: { populate: true },
+              },
+            },
+          },
+        },
+        'contact.slider-comunity': {
+          populate: {
+            slides: {
+              populate: {
+                media: { fields: ['url', 'alternativeText'] },
+              },
+            },
+          },
+        },
+        'contact.contact-form': {
+          populate: {
+            subjectList: { populate: true },
+          },
+        },
+      },
+    },
+  },
+};
+
+// Fetch contact page data from Strapi
+const response = await fetchAPI<{ data: ContactPageResponse }>(
+  'contact-page',
+  contactPageQuery
+);
+
+const blocks = response?.data?.blocks || [];
+
+// Helper function to find a block by component type
+function findBlock<T extends ContactPageBlock>(
+  componentType: T['__component']
+): T | undefined {
+  return blocks.find((block) => block.__component === componentType) as T | undefined;
+}
+
+// Extract each block type
+const mapBlock = findBlock<MapContactInfoBlock>('contact.map-contact-info');
+const contactInfoBlock = findBlock<ContactInfoBlock>('contact.contact-info');
+const officeHoursBlock = findBlock<OfficeHoursBlock>('hero.public-atention');
+const carouselBlock = findBlock<SliderCommunityBlock>('contact.slider-comunity');
+const contactFormBlock = findBlock<ContactFormBlock>('contact.contact-form');
+
+// Transform office hours block data to component props format
+const officeHoursData = officeHoursBlock
+  ? {
+      title: officeHoursBlock.title,
+      subtitle: officeHoursBlock.Subtitle,
+      description: officeHoursBlock.description,
+      scheduleItems: (officeHoursBlock.ScheduleRangeItem || []).map((item) => ({
+        description: item.description,
+        timeRanges: (item.TimeRange || []).map((range) => ({
+          start: range.TimeStart,
+          end: range.TimeEnd,
+        })),
+      })),
+    }
+  : null;
+---
+
+<Layout>
+  <main class="bg-background-light min-h-screen">
+    <section class="mt-12 w-full px-4 md:px-20 lg:px-40">
+      <div class="mb-12 flex flex-col gap-4">
+        <p
+          class="text-sm uppercase tracking-[0.35em] text-accent-gold font-semibold"
+        >
+          Contacto y ubicacion
+        </p>
+        <h1 class="text-4xl md:text-5xl font-bold text-primary-text">
+          Estamos aqui para ti: contactanos o visitanos
+        </h1>
+        <p class="max-w-2xl text-lg text-primary-text/80">
+          Estamos aqui para servir a la comunidad de Fusagasuga. No dude en
+          visitarnos o enviarnos sus intenciones y consultas
+        </p>
+      </div>
+    </section>
+    <section
+      class="mt-12 w-full px-4 md:px-20 lg:px-40 grid gap-8 lg:grid-cols-2"
+    >
+      <div class="gap-8 flex flex-col">
+        {mapBlock && (
+          <MapCard
+            title={mapBlock.title}
+            embedUrl={mapBlock.embedUrl}
+            address={mapBlock.address}
+            directionsLink={mapBlock.directionsLink}
+          />
+        )}
+                {contactFormBlock && (
+          <ContactFormCard
+            title={contactFormBlock.title}
+            description={contactFormBlock.description}
+            subjects={contactFormBlock.subjectList}
+          />
+        )}
+      </div>
+      <div class="gap-8 flex flex-col">
+        {contactInfoBlock && (
+          <ContactInfoCard
+            title={contactInfoBlock.title}
+            subtitle={contactInfoBlock.subtitle}
+            description={contactInfoBlock.description}
+            infoLinks={contactInfoBlock.infoLinks}
+            socialLinks={contactInfoBlock.socialLinks}
+          />
+        )}
+        {officeHoursData && (
+          <OfficeHoursCard
+            title={officeHoursData.title}
+            subtitle={officeHoursData.subtitle}
+            description={officeHoursData.description}
+            scheduleItems={officeHoursData.scheduleItems}
+          />
+        )}
+        {carouselBlock && carouselBlock.slides && carouselBlock.slides.length > 0 && (
+          <CommunityCarousel slides={carouselBlock.slides} />
+        )}
+      </div>
+    </section>
+  </main>
+</Layout>

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_contact_contact_forms",
+  "info": {
+    "displayName": "Contact Form"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "subjectList": {
+      "type": "component",
+      "component": "shared.enum-list",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

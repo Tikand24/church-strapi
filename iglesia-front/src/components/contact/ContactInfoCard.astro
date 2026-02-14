@@ -1,0 +1,88 @@
+---
+import type { ContactInfoCardProps } from '../../types';
+
+interface Props extends ContactInfoCardProps {}
+
+const { title, subtitle, description, infoLinks, socialLinks } = Astro.props;
+---
+
+<article class="bg-primary text-white rounded-3xl shadow-lg p-8 flex flex-col gap-6">
+  <div class="space-y-3">
+    <p class="text-sm uppercase tracking-[0.35em] text-white/70">{title}</p>
+    {subtitle && <p class="text-xl text-white/90">{subtitle}</p>}
+    {description && <p class="text-white/80">{description}</p>}
+  </div>
+
+  {/* Info Links (phones, email, etc.) */}
+  {infoLinks && infoLinks.length > 0 && (
+    <div class="space-y-5">
+      {infoLinks.map((info) => (
+        <div class="flex items-center gap-4">
+          <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
+            {info.iconSvg ? (
+              <span class="h-5 w-5 [&>svg]:h-full [&>svg]:w-full" set:html={info.iconSvg} />
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-5 w-5"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+            )}
+          </span>
+          {info.link && (
+            <a
+              href={info.link}
+              target={info.redirectOutside ? '_blank' : '_self'}
+              rel={info.redirectOutside ? 'noopener' : undefined}
+              class="text-lg font-semibold hover:underline"
+            >
+              {info.text}
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {/* Social Links */}
+  {socialLinks && socialLinks.length > 0 && (
+    <div class="flex flex-wrap gap-3">
+      {socialLinks.map((social) => (
+        <a
+          href={social.link}
+          target={social.redirectOutside ? '_blank' : '_self'}
+          rel={social.redirectOutside ? 'noopener' : undefined}
+          aria-label={social.text}
+          class="h-12 w-12 inline-flex items-center justify-center rounded-2xl bg-white/15 hover:bg-white/25 transition"
+        >
+          {social.iconSvg ? (
+            <span class="h-5 w-5 [&>svg]:h-full [&>svg]:w-full" set:html={social.iconSvg} />
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="h-5 w-5"
+            >
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+          )}
+        </a>
+      ))}
+    </div>
+  )}
+</article>

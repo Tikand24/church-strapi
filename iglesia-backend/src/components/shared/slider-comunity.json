@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_shared_slider_comunities",
+  "info": {
+    "displayName": "Slider comunity"
+  },
+  "options": {},
+  "attributes": {
+    "media": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtile": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "config": {}
+}

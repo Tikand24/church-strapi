@@ -9,6 +9,7 @@ export type * from './news';
 export type * from './liturgical-events';
 export type * from './news-page';
 export type * from './newsletter-subscription';
+export type * from './contact';
 
 export enum PriestGrade {
   PARISH_PRIEST = 'Parroco',

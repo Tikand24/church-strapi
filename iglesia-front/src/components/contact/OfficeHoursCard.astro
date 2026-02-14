@@ -1,0 +1,71 @@
+---
+import type { OfficeHoursCardProps } from '../../types';
+import { formateador } from '../../lib/utils';
+
+interface Props extends OfficeHoursCardProps {}
+
+const { title, subtitle, description, scheduleItems } = Astro.props;
+
+/**
+ * Format a time string (HH:mm:ss or HH:mm) using the formateador
+ */
+function formatTime(time?: string): string {
+  if (!time) return '';
+  // Parse the time string and create a Date object for formatting
+  const [hours, minutes] = time.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return formateador.format(date);
+}
+
+/**
+ * Format time ranges for display
+ * Handles multiple time ranges per day (e.g., morning and afternoon)
+ */
+function formatTimeRanges(timeRanges: Array<{ start?: string; end?: string }>): string {
+  if (!timeRanges || timeRanges.length === 0) return 'Cerrado';
+  
+  return timeRanges
+    .map((range) => {
+      if (!range.start && !range.end) return 'Cerrado';
+      return `${formatTime(range.start)} - ${formatTime(range.end)}`;
+    })
+    .join(' | ');
+}
+
+/**
+ * Check if a schedule entry indicates closed (no valid time ranges)
+ */
+function isClosed(timeRanges: Array<{ start?: string; end?: string }>): boolean {
+  if (!timeRanges || timeRanges.length === 0) return true;
+  return timeRanges.every((range) => !range.start && !range.end);
+}
+---
+
+<article class="bg-white rounded-3xl shadow-lg p-6 flex flex-col gap-4">
+  <div>
+    <p class="text-sm uppercase tracking-[0.35em] text-primary">{title}</p>
+    {subtitle && <p class="text-lg text-primary-text">{subtitle}</p>}
+    {description && <p class="text-primary-text">{description}</p>}
+  </div>
+  <div class="space-y-3">
+    {scheduleItems.map((item) => {
+      const closed = isClosed(item.timeRanges);
+      const schedule = formatTimeRanges(item.timeRanges);
+      
+      return (
+        <div class="flex items-center justify-between rounded-2xl border border-primary/10 px-4 py-3">
+          <div>
+            <p class="text-sm font-semibold text-primary">{item.description}</p>
+            <p class={`text-primary-text ${closed ? 'text-primary' : ''}`}>{schedule}</p>
+          </div>
+          {closed && (
+            <span class="rounded-full bg-primary/10 text-primary text-xs font-semibold px-3 py-1">
+              Cerrado
+            </span>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</article>

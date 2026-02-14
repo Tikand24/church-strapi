@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_contact_slider_comunities",
+  "info": {
+    "displayName": "Slider Comunity"
+  },
+  "options": {},
+  "attributes": {
+    "slides": {
+      "type": "component",
+      "component": "shared.slider-comunity",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

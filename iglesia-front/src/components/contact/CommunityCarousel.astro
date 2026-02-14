@@ -1,0 +1,134 @@
+---
+import type { CommunityCarouselProps } from '../../types';
+import { getUrlImage } from '../../lib/utils';
+
+interface Props extends CommunityCarouselProps {}
+
+const { slides } = Astro.props;
+const carouselId = `carousel-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+<article class="bg-white rounded-3xl shadow-lg overflow-hidden">
+  <div class="relative w-full h-80" id={carouselId} data-carousel>
+    {slides.map((slide, index) => {
+      const imageUrl = getUrlImage(slide.media?.url);
+      
+      return (
+        <div
+          class="carousel-slide absolute inset-0 w-full h-80 bg-cover bg-center transition-opacity duration-700 ease-in-out"
+          style={`background-image:url(${imageUrl});`}
+          data-slide-index={index}
+          data-active={index === 0 ? 'true' : 'false'}
+        >
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/10"></div>
+          <div class="relative z-10 h-full flex flex-col justify-end p-8 text-white">
+            {/* Note: API has typo "subtile" instead of "subtitle" */}
+            <p class="text-xs uppercase tracking-[0.5em] text-white/70">{slide.subtile}</p>
+            <h3 class="text-2xl font-semibold">{slide.title}</h3>
+            <p class="text-white/80">{slide.description}</p>
+          </div>
+        </div>
+      );
+    })}
+    
+    {/* Slide indicators */}
+    {slides.length > 1 && (
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        {slides.map((_, index) => (
+          <button
+            type="button"
+            class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white/80 transition-colors"
+            data-indicator-index={index}
+            data-active={index === 0 ? 'true' : 'false'}
+            aria-label={`Ir a slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</article>
+
+<style>
+  .carousel-slide {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .carousel-slide[data-active='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .carousel-indicator[data-active='true'] {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initCarousels() {
+    const carousels = document.querySelectorAll('[data-carousel]');
+    
+    carousels.forEach((carousel) => {
+      const slides = carousel.querySelectorAll('.carousel-slide');
+      const indicators = carousel.querySelectorAll('.carousel-indicator');
+      const slideCount = slides.length;
+      
+      if (slideCount <= 1) return;
+      
+      let currentIndex = 0;
+      let intervalId: ReturnType<typeof setInterval>;
+      
+      function goToSlide(index: number) {
+        // Deactivate current slide
+        slides[currentIndex].setAttribute('data-active', 'false');
+        indicators[currentIndex]?.setAttribute('data-active', 'false');
+        
+        // Update index
+        currentIndex = (index + slideCount) % slideCount;
+        
+        // Activate new slide
+        slides[currentIndex].setAttribute('data-active', 'true');
+        indicators[currentIndex]?.setAttribute('data-active', 'true');
+      }
+      
+      function nextSlide() {
+        goToSlide(currentIndex + 1);
+      }
+      
+      function startAutoPlay() {
+        intervalId = setInterval(nextSlide, 10000); // 10 seconds
+      }
+      
+      function resetAutoPlay() {
+        clearInterval(intervalId);
+        startAutoPlay();
+      }
+      
+      // Add click handlers to indicators
+      indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+          goToSlide(index);
+          resetAutoPlay();
+        });
+      });
+      
+      // Start auto-play
+      startAutoPlay();
+      
+      // Pause on hover (optional UX improvement)
+      carousel.addEventListener('mouseenter', () => {
+        clearInterval(intervalId);
+      });
+      
+      carousel.addEventListener('mouseleave', () => {
+        startAutoPlay();
+      });
+    });
+  }
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initCarousels);
+  
+  // Re-initialize on Astro page transitions (View Transitions API)
+  document.addEventListener('astro:page-load', initCarousels);
+</script>
