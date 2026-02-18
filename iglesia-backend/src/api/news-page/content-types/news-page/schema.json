@@ -18,6 +18,11 @@
       "type": "component",
       "component": "shared.link",
       "repeatable": true
+    },
+    "Seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
     }
   }
 }

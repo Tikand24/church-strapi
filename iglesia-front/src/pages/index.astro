@@ -14,6 +14,9 @@ import type {
 
 const JSON_POPULATE = {
 	populate: {
+		'Seo': {
+			populate: true,
+		},
 		blocks: {
 			on: {
 				'hero.public-atention': {
@@ -84,9 +87,11 @@ const publicAtentionData: PublicAtentionProps = homeData.blocks.find(
 const priestGroupData: PriestGroupProps = homeData.blocks.find(
 	(block: any) => block.__component === 'priest.priest-group',
 );
+
+const seoData = homeData.Seo;
 ---
 
-<Layout>
+<Layout title={seoData?.metaTitle} description={seoData?.metaDescription}>
 	<section class="bg-background-light">
 		{
 			heroData && (

@@ -1,4 +1,4 @@
-import type { Link, Media, PublicAtentionProps } from './common';
+import type { Link, Media, PublicAtentionProps, Seo } from './common';
 
 // ==========================================
 // Strapi API Response Types
@@ -80,6 +80,7 @@ export type ContactPageBlock =
 /** Full contact page response from Strapi API */
 export interface ContactPageResponse {
   blocks: ContactPageBlock[];
+  Seo?: Seo;
 }
 
 // ==========================================

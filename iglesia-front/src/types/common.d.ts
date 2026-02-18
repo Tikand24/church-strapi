@@ -1,5 +1,10 @@
 import type { ScheduleRangeItem } from "./schedule";
 
+export interface Seo {
+  metaTitle: string;
+  metaDescription: string;
+}
+
 export interface Link {
   text: string;
   link?: string;

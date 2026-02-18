@@ -1,3 +1,5 @@
+import type { Seo } from './common';
+
 export interface QuickLinkItem {
   id: number;
   text: string;
@@ -11,6 +13,7 @@ export interface NewsPage {
   documentId: string;
   title: string;
   quickLinks: QuickLinkItem[];
+  Seo?: Seo;
 }
 
 export interface NewsPageResponse {

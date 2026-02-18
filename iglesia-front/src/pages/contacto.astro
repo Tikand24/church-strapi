@@ -19,6 +19,9 @@ import type {
 // Build the complex populate query for the contact page
 const contactPageQuery = {
   populate: {
+    Seo: {
+      populate: true,
+    },
     blocks: {
       on: {
         'contact.map-contact-info': {
@@ -98,9 +101,11 @@ const officeHoursData = officeHoursBlock
       })),
     }
   : null;
+
+const seoData = response?.data?.Seo;
 ---
 
-<Layout>
+<Layout title={seoData?.metaTitle} description={seoData?.metaDescription}>
   <main class="bg-background-light min-h-screen">
     <section class="mt-12 w-full px-4 md:px-20 lg:px-40">
       <div class="mb-12 flex flex-col gap-4">

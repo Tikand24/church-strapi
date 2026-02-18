@@ -1,4 +1,4 @@
-import type { Media } from "./common";
+import type { Media, Seo } from "./common";
 
 export interface Requirement {
   id: number;
@@ -40,4 +40,5 @@ export interface SacramentPage {
   publishedAt: string;
   sacramentList: Sacrament[];
   blocks: MoreInfoBlock[];
+  Seo?: Seo;
 }

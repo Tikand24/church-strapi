@@ -28,6 +28,11 @@
       "components": [
         "more-info.more-info"
       ]
+    },
+    "Seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
     }
   }
 }

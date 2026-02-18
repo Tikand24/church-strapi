@@ -17,7 +17,7 @@ const navData: NavigationStrapi = await fetchAPI('navigation', {
   }
 }, 'data');
 
-const logoIconUrl = getUrlImage(navData?.logo?.icon?.url); 
+const logoIconUrl = getUrlImage(navData?.logo?.icon?.url);
   
 ---
 
@@ -45,7 +45,7 @@ const logoIconUrl = getUrlImage(navData?.logo?.icon?.url);
         {navData?.menuItems?.sort((a: any, b: any) => a.order - b.order).map((item: any) => (
           <a
             class="capitalize text-black text-sm font-medium hover:text-primary transition-colors"
-            href={item.url}
+            href={item.url.link}
             target={item.url.redirectOutSide ? '_blank' : '_self'}
             rel={item.url.redirectOutSide ? 'noopener noreferrer' : ''}
           >

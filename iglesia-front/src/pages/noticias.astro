@@ -9,6 +9,7 @@ import NewsletterSubscribe from '../components/NewsletterSubscribe.astro';
 import type { Article, ArticleListResponse } from '../types/news';
 import type { LiturgicalEvent, LiturgicalEventListResponse, LiturgicalWeekday } from '../types/liturgical-events';
 import type { NewsPageResponse, QuickLinkItem } from '../types/news-page';
+import type { Seo } from '../types/common';
 
 const populateQuery = {
   populate: {
@@ -33,6 +34,7 @@ let articles: Article[] = [];
 let liturgicalEvents: LiturgicalEvent[] = [];
 let quickLinksTitle = '';
 let quickLinksData: QuickLinkItem[] = [];
+let seoData: Seo | undefined;
 
 try {
   const response = await fetchAPI<ArticleListResponse>('articles', populateQuery);
@@ -53,6 +55,9 @@ try {
 try {
   const quickLinksResponse = await fetchAPI<NewsPageResponse>('news-page', {
     populate: {
+      Seo: {
+        populate: true,
+      },
       quickLinks: {
         populate:true
       },
@@ -61,6 +66,7 @@ try {
   const newsPage = quickLinksResponse?.data;
   quickLinksTitle = newsPage?.title || 'Enlaces rápidos';
   quickLinksData = (newsPage?.quickLinks || []) as QuickLinkItem[];
+  seoData = newsPage?.Seo;
 } catch (error) {
   console.error('No se pudieron cargar los enlaces rápidos', error);
 }
@@ -104,7 +110,7 @@ const otherArticles = featuredArticle
   : articles;
 ---
 
-<Layout title="Noticias">
+<Layout title={seoData?.metaTitle} description={seoData?.metaDescription}>
   <main class="bg-background-light min-h-screen">
      <section class="w-full px-4 md:px-20 lg:px-40 py-16">
       <div class="mb-12 flex flex-col gap-4">
