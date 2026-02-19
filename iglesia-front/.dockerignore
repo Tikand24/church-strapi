@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Git
+.git/
+.gitignore
+
+# Astro cache
+.astro/
+
+# IDE/Editor
+.vscode/
+.idea/
+.opencode/
+
+# Documentation
+*.md
+!README.md
+
+# Environment files
+.env
+.env.*
+
+# Source files (not needed, we use pre-built dist)
+src/
+
+# Config files not needed in container
+tsconfig.json
+astro.config.mjs
+package.json
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db

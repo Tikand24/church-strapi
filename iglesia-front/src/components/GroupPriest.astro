@@ -1,16 +1,21 @@
 ---
-import imagePriest1 from '../assets/priest1.png';
+import { Image } from 'astro:assets';
 import { PriestGrade } from '../types';
 import type { PriestGroupProps } from '../types';
 
 interface Props extends PriestGroupProps {}
 
+const STRAPI_URL = import.meta.env.STRAPI_URL || 'http://localhost:1337';
+
 const { title, description, PriestList } = Astro.props;
-PriestList.forEach((priest) => {
-  if (!priest.image.url.startsWith('http')) {
-    priest.image.url = `${import.meta.env.STRAPI_URL || 'http://localhost:1337'}${priest.image.url}`;
-  }
-});
+
+// Build image URLs at build time (don't mutate the original objects)
+const priestsWithImages = PriestList.map((priest) => ({
+  ...priest,
+  imageUrl: priest.image.url.startsWith('http')
+    ? priest.image.url
+    : `${STRAPI_URL}${priest.image.url}`,
+}));
 
 const colorPriestGrade = {
   [PriestGrade.PARISH_PRIEST]: {
@@ -51,16 +56,18 @@ const getPriestGradeColor = (grade: PriestGrade) => {
     </div>
     <div class="flex justify-between">
       {
-        PriestList &&
-          PriestList.map((priest) => (
+        priestsWithImages &&
+          priestsWithImages.map((priest) => (
             <div class="flex flex-col items-center justify-start text-center mt-8 w-full group">
               <div class="relative">
                 <div
                   class={`size-48 rounded-full border-4 ${getPriestGradeColor(priest.grade).border} transition-all duration-300 overflow-hidden`}
                 >
-                  <img
-                    src={priest.image.url}
-                    alt={priest.image.alternativeText}
+                  <Image
+                    src={priest.imageUrl}
+                    alt={priest.image.alternativeText || priest.name}
+                    width={400}
+                    height={400}
                     class="w-full h-full object-cover grayscale-100 group-hover:grayscale-0 transition-all duration-300"
                   />
                 </div>

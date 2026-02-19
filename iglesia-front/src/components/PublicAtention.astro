@@ -1,5 +1,5 @@
 ---
-import imagePlanta from '../assets/planta.png';
+import { Image } from 'astro:assets';
 import { formateador } from '../lib/utils.ts';
 import type { PublicAtentionProps } from '../types';
 
@@ -8,16 +8,14 @@ const STRAPI_URL = import.meta.env.STRAPI_URL || 'http://localhost:1337';
 
 const { title, Subtitle, description, image, enlace, ScheduleRangeItem } =
   Astro.props;
-let imageUrl:any = null;
+
+let imageData: { url: string; alternativeText: string } | null = null;
 if (image && image.length > 0) {
-  image.forEach((img) => {
-    imageUrl = img.url.startsWith('http')
-      ? img
-      : {
-          url: `${STRAPI_URL}${img.url}`,
-          alternativeText: img.alternativeText,
-        };
-  });
+  const img = image[0];
+  imageData = {
+    url: img.url.startsWith('http') ? img.url : `${STRAPI_URL}${img.url}`,
+    alternativeText: img.alternativeText || '',
+  };
 }
 ---
 
@@ -72,10 +70,12 @@ if (image && image.length > 0) {
     </div>
     <div class="max-w-1/2">
       {
-        imageUrl && (
-          <img
-            src={imageUrl.url}
-            alt={imageUrl.alternativeText}
+        imageData && (
+          <Image
+            src={imageData.url}
+            alt={imageData.alternativeText}
+            width={800}
+            height={600}
             class="border-4 max-h-100 border-white rounded-2xl"
           />
         )

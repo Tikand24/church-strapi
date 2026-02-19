@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { getUrlImage } from '../lib/utils';
 import type { Sacrament } from '../types';
 
@@ -14,9 +15,11 @@ const imageUrl = getUrlImage(sacrament.image?.url);
 <article class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
   {imageUrl ? (
     <div class="h-48 overflow-hidden">
-      <img
+      <Image
         src={imageUrl}
-        alt={sacrament.image.alternativeText || sacrament.name}
+        alt={sacrament.image?.alternativeText || sacrament.name}
+        width={600}
+        height={400}
         class="w-full h-full object-cover"
       />
     </div>

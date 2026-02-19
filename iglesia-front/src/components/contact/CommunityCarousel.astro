@@ -1,4 +1,5 @@
 ---
+import { getImage } from 'astro:assets';
 import type { CommunityCarouselProps } from '../../types';
 import { getUrlImage } from '../../lib/utils';
 
@@ -6,17 +7,36 @@ interface Props extends CommunityCarouselProps {}
 
 const { slides } = Astro.props;
 const carouselId = `carousel-${Math.random().toString(36).substring(2, 9)}`;
+
+// Pre-process images at build time using getImage() for optimization
+const slidesWithOptimizedImages = await Promise.all(
+  slides.map(async (slide, index) => {
+    const imageUrl = getUrlImage(slide.media?.url);
+    if (imageUrl) {
+      try {
+        const optimizedImage = await getImage({
+          src: imageUrl,
+          width: 1200,
+          height: 600,
+        });
+        return { ...slide, optimizedImageUrl: optimizedImage.src };
+      } catch (error) {
+        console.error(`Failed to optimize image for slide ${index}:`, error);
+        return { ...slide, optimizedImageUrl: imageUrl };
+      }
+    }
+    return { ...slide, optimizedImageUrl: null };
+  })
+);
 ---
 
 <article class="bg-white rounded-3xl shadow-lg overflow-hidden">
   <div class="relative w-full h-80" id={carouselId} data-carousel>
-    {slides.map((slide, index) => {
-      const imageUrl = getUrlImage(slide.media?.url);
-      
+    {slidesWithOptimizedImages.map((slide, index) => {
       return (
         <div
           class="carousel-slide absolute inset-0 w-full h-80 bg-cover bg-center transition-opacity duration-700 ease-in-out"
-          style={`background-image:url(${imageUrl});`}
+          style={slide.optimizedImageUrl ? `background-image:url(${slide.optimizedImageUrl});` : ''}
           data-slide-index={index}
           data-active={index === 0 ? 'true' : 'false'}
         >
