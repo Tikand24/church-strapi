@@ -107,26 +107,26 @@ const seoData = response?.data?.Seo;
 
 <Layout title={seoData?.metaTitle} description={seoData?.metaDescription}>
   <main class="bg-background-light min-h-screen">
-    <section class="mt-12 w-full px-4 md:px-20 lg:px-40">
-      <div class="mb-12 flex flex-col gap-4">
+    <section class="mt-8 sm:mt-10 md:mt-12 w-full px-4 md:px-20 lg:px-40">
+      <div class="mb-8 sm:mb-10 md:mb-12 flex flex-col gap-3 sm:gap-4">
         <p
-          class="text-sm uppercase tracking-[0.35em] text-accent-gold font-semibold"
+          class="text-xs sm:text-sm uppercase tracking-[0.25em] sm:tracking-[0.35em] text-accent-gold font-semibold"
         >
           Contacto y ubicacion
         </p>
-        <h1 class="text-4xl md:text-5xl font-bold text-primary-text">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-text">
           Estamos aqui para ti: contactanos o visitanos
         </h1>
-        <p class="max-w-2xl text-lg text-primary-text/80">
+        <p class="max-w-2xl text-base sm:text-lg text-primary-text/80">
           Estamos aqui para servir a la comunidad de Fusagasuga. No dude en
           visitarnos o enviarnos sus intenciones y consultas
         </p>
       </div>
     </section>
     <section
-      class="mt-12 w-full px-4 md:px-20 lg:px-40 grid gap-8 lg:grid-cols-2"
+      class="mt-8 sm:mt-10 md:mt-12 mb-12 w-full px-4 md:px-20 lg:px-40 grid gap-6 sm:gap-7 md:gap-8 lg:grid-cols-2 lg:items-start"
     >
-      <div class="gap-8 flex flex-col">
+      <div class="gap-6 sm:gap-7 md:gap-8 flex flex-col">
         {mapBlock && (
           <MapCard
             title={mapBlock.title}
@@ -135,7 +135,7 @@ const seoData = response?.data?.Seo;
             directionsLink={mapBlock.directionsLink}
           />
         )}
-                {contactFormBlock && (
+        {contactFormBlock && (
           <ContactFormCard
             title={contactFormBlock.title}
             description={contactFormBlock.description}
@@ -143,7 +143,7 @@ const seoData = response?.data?.Seo;
           />
         )}
       </div>
-      <div class="gap-8 flex flex-col">
+      <div class="gap-6 sm:gap-7 md:gap-8 flex flex-col">
         {contactInfoBlock && (
           <ContactInfoCard
             title={contactInfoBlock.title}

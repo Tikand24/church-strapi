@@ -38,7 +38,7 @@ const logoIconUrl = getUrlImage(navData?.logo?.icon?.url);
         </div>
       )}
       <div class="flex flex-col">
-        <h2 class="text-black text-lg font-bold leading-tight tracking-tight">
+        <h2 class="text-black text-base sm:text-lg font-bold leading-tight tracking-tight">
           {navData?.logo?.churchName || 'Sagrada familia de'}
         </h2>
         <p class="text-[10px] uppercase tracking-widest text-accent-gold font-bold">
@@ -46,7 +46,8 @@ const logoIconUrl = getUrlImage(navData?.logo?.icon?.url);
         </p>
       </div>
     </div>
-    <div class="flex flex-1 justify-end gap-8 items-center">
+    <div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
+      {/* Desktop Navigation */}
       <nav class="hidden md:flex items-center gap-9">
         {navData?.menuItems?.sort((a: any, b: any) => a.order - b.order).map((item: any) => (
           <a
@@ -59,16 +60,209 @@ const logoIconUrl = getUrlImage(navData?.logo?.icon?.url);
           </a>
         ))}
       </nav>
+      
+      {/* CTA Button */}
       {navData?.ctaButton && (
         <a
           href={navData.ctaButton.url.link}
           target={navData.ctaButton.url.redirectOutside ? '_blank' : '_self'}
           rel={navData.ctaButton.url.redirectOutside ? 'noopener noreferrer' : ''}
-          class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 transition-all"
+          class="hidden md:flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 transition-all"
         >
           <span class="truncate">{navData.ctaButton.url.text}</span>
         </a>
       )}
+      
+      {/* Mobile Menu Button */}
+      <button
+        id="mobile-menu-button"
+        class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors z-[60]"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+      >
+        <svg id="menu-icon" class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="close-icon" class="w-6 h-6 text-black hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
     </div>
   </div>
 </header>
+
+{/* Mobile Menu Overlay */}
+<div
+  id="mobile-menu-overlay"
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] md:hidden opacity-0 pointer-events-none transition-opacity duration-300"
+  aria-hidden="true"
+></div>
+
+{/* Mobile Side Menu */}
+<nav
+  id="mobile-menu"
+  class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-background-light shadow-2xl z-[60] md:hidden transform translate-x-full transition-transform duration-300 ease-in-out"
+>
+  <div class="flex flex-col h-full">
+    {/* Menu Header */}
+    <div class="flex items-center justify-between p-6 border-b border-blue-50">
+      <div class="flex items-center gap-3">
+        {logoIconUrl && (
+          <div class="size-8">
+            <Image 
+              src={logoIconUrl} 
+              alt="Church logo" 
+              width={64} 
+              height={64} 
+              class="w-full h-full" 
+            />
+          </div>
+        )}
+        <div class="flex flex-col">
+          <h3 class="text-black text-base font-bold leading-tight">
+            {navData?.logo?.churchName || 'Sagrada familia de'}
+          </h3>
+          <p class="text-[10px] uppercase tracking-widest text-accent-gold font-bold">
+            {navData?.logo?.locationName || 'Fusagasugá'}
+          </p>
+        </div>
+      </div>
+      <button
+        id="close-menu-button"
+        class="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors"
+        aria-label="Close menu"
+      >
+        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    
+    {/* Menu Items */}
+    <div class="flex-1 overflow-y-auto py-6 px-6">
+      <div class="flex flex-col gap-2">
+        {navData?.menuItems?.sort((a: any, b: any) => a.order - b.order).map((item: any) => (
+          <a
+            class="capitalize text-black text-lg font-medium hover:text-primary hover:bg-blue-50 transition-all py-3 px-4 rounded-lg"
+            href={item.url.link}
+            target={item.url.redirectOutSide ? '_blank' : '_self'}
+            rel={item.url.redirectOutSide ? 'noopener noreferrer' : ''}
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+    </div>
+    
+    {/* Menu Footer with CTA */}
+    {navData?.ctaButton && (
+      <div class="p-6 border-t border-blue-50">
+        <a
+          href={navData.ctaButton.url.link}
+          target={navData.ctaButton.url.redirectOutside ? '_blank' : '_self'}
+          rel={navData.ctaButton.url.redirectOutside ? 'noopener noreferrer' : ''}
+          class="flex items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-bold shadow-lg hover:bg-primary/90 transition-all w-full"
+        >
+          <span class="truncate">{navData.ctaButton.url.text}</span>
+        </a>
+      </div>
+    )}
+  </div>
+</nav>
+
+<script>
+  // Mobile side menu functionality
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const closeMenuButton = document.getElementById('close-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  let startX = 0;
+  let currentX = 0;
+  let isDragging = false;
+
+  const openMenu = () => {
+    if (mobileMenu && mobileMenuOverlay) {
+      mobileMenu.classList.remove('translate-x-full');
+      mobileMenuOverlay.classList.remove('opacity-0', 'pointer-events-none');
+      menuIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+      mobileMenuButton?.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  const closeMenu = () => {
+    if (mobileMenu && mobileMenuOverlay) {
+      mobileMenu.classList.add('translate-x-full');
+      mobileMenuOverlay.classList.add('opacity-0', 'pointer-events-none');
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+      mobileMenuButton?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Button click handlers
+  mobileMenuButton?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+    if (isExpanded) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  closeMenuButton?.addEventListener('click', closeMenu);
+  mobileMenuOverlay?.addEventListener('click', closeMenu);
+
+  // Close menu when clicking on a link
+  const mobileMenuLinks = mobileMenu?.querySelectorAll('a');
+  mobileMenuLinks?.forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  // Swipe to close functionality
+  if (mobileMenu) {
+    mobileMenu.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    });
+
+    mobileMenu.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentX = e.touches[0].clientX;
+      const diff = currentX - startX;
+      
+      // Only allow swiping to the right (closing)
+      if (diff > 0) {
+        mobileMenu.style.transform = `translateX(${diff}px)`;
+      }
+    });
+
+    mobileMenu.addEventListener('touchend', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      
+      const diff = currentX - startX;
+      
+      // If swiped more than 100px, close the menu
+      if (diff > 100) {
+        closeMenu();
+      }
+      
+      // Reset transform
+      mobileMenu.style.transform = '';
+    });
+  }
+
+  // Close menu on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeMenu();
+    }
+  });
+</script>

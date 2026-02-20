@@ -6,8 +6,8 @@ interface Props extends MapCardProps {}
 const { title, embedUrl, address, directionsLink } = Astro.props;
 ---
 
-<article class="bg-white rounded-3xl shadow-lg overflow-hidden">
-  <div class="aspect-[4/3] sm:aspect-[5/3]">
+<article class="bg-white rounded-2xl sm:rounded-3xl shadow-lg overflow-hidden w-full">
+  <div class="aspect-[4/3] sm:aspect-[16/9] md:aspect-[5/3] relative">
     <iframe
       title={title}
       src={embedUrl}
@@ -15,25 +15,25 @@ const { title, embedUrl, address, directionsLink } = Astro.props;
       height="100%"
       loading="lazy"
       referrerpolicy="no-referrer-when-downgrade"
-      class="w-full h-full border-0"
+      class="absolute inset-0 w-full h-full border-0"
       allowfullscreen
     ></iframe>
   </div>
-  <div class="p-6 flex flex-col gap-4">
-    <div>
-      <h2 class="text-xl font-semibold text-primary">{title}</h2>
-      <p class="text-primary-text">{address}</p>
+  <div class="p-4 sm:p-5 md:p-6 flex flex-col gap-3 sm:gap-4">
+    <div class="flex flex-col gap-1 sm:gap-2">
+      <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-primary">{title}</h2>
+      <p class="text-sm sm:text-base text-primary-text line-clamp-2">{address}</p>
     </div>
     <a
-      class="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-white px-6 py-3 text-sm font-semibold hover:bg-primary/90 transition"
+      class="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-white px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold hover:bg-primary/90 hover:scale-105 transition-all active:scale-95 w-full sm:w-auto"
       href={directionsLink.link}
       target={directionsLink.redirectOutside ? '_blank' : '_self'}
-      rel={directionsLink.redirectOutside ? 'noopener' : undefined}
+      rel={directionsLink.redirectOutside ? 'noopener noreferrer' : undefined}
     >
       {directionsLink.iconSvg && (
-        <span class="h-5 w-5" set:html={directionsLink.iconSvg} />
+        <span class="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" set:html={directionsLink.iconSvg} />
       )}
-      {directionsLink.text}
+      <span class="truncate">{directionsLink.text}</span>
     </a>
   </div>
 </article>
