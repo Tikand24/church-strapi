@@ -1,0 +1,255 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 634B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 676B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:20-alpine
+#3 ...
+
+#4 [internal] load metadata for docker.io/library/nginx:alpine
+#4 DONE 0.5s
+
+#3 [internal] load metadata for docker.io/library/node:20-alpine
+#3 DONE 0.5s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 428B done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [stage-1 1/3] FROM docker.io/library/nginx:alpine@sha256:1d13701a5f9f3fb01aaa88cef2344d65b6b5bf6b7d9fa4cf0dca557a8d7702ba
+#7 resolve docker.io/library/nginx:alpine@sha256:1d13701a5f9f3fb01aaa88cef2344d65b6b5bf6b7d9fa4cf0dca557a8d7702ba 0.1s done
+#7 DONE 0.1s
+
+#8 [builder 1/6] FROM docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#8 resolve docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#8 resolve docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8 0.1s done
+#8 DONE 0.1s
+
+#7 [stage-1 1/3] FROM docker.io/library/nginx:alpine@sha256:1d13701a5f9f3fb01aaa88cef2344d65b6b5bf6b7d9fa4cf0dca557a8d7702ba
+#7 CACHED
+
+#9 [builder 2/6] WORKDIR /app
+#9 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 3.67kB done
+#6 DONE 0.0s
+
+#10 [builder 3/6] COPY package*.json ./
+#10 ...
+
+#11 [stage-1 2/3] COPY nginx.conf /etc/nginx/conf.d/default.conf
+#11 DONE 0.2s
+
+#10 [builder 3/6] COPY package*.json ./
+#10 DONE 0.2s
+
+#12 [builder 4/6] RUN npm ci
+#12 14.54 
+#12 14.54 added 393 packages, and audited 394 packages in 14s
+#12 14.54 
+#12 14.54 174 packages are looking for funding
+#12 14.54   run `npm fund` for details
+#12 14.55 
+#12 14.55 8 vulnerabilities (2 low, 6 moderate)
+#12 14.55 
+#12 14.55 To address issues that do not require attention, run:
+#12 14.55   npm audit fix
+#12 14.55 
+#12 14.55 To address all issues (including breaking changes), run:
+#12 14.55   npm audit fix --force
+#12 14.55 
+#12 14.55 Run `npm audit` for details.
+#12 14.55 npm notice
+#12 14.55 npm notice New major version of npm available! 10.8.2 -> 11.10.1
+#12 14.55 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.10.1
+#12 14.55 npm notice To update run: npm install -g npm@11.10.1
+#12 14.55 npm notice
+#12 DONE 16.7s
+
+#13 [builder 5/6] COPY . .
+#13 DONE 0.5s
+
+#14 [builder 6/6] RUN npm run build
+#14 1.099 
+#14 1.099 > iglesia-front@0.0.1 build
+#14 1.099 > astro build
+#14 1.099 
+#14 1.691 ▶ Astro collects anonymous usage data.
+#14 1.691   This information helps us improve Astro.
+#14 1.691   Run "astro telemetry disable" to opt-out.
+#14 1.691   https://astro.build/telemetry
+#14 1.691 
+#14 2.729 16:31:29 [content] Syncing content
+#14 2.736 16:31:29 [content] Synced content
+#14 2.736 16:31:29 [types] Generated 133ms
+#14 2.737 16:31:29 [build] output: "static"
+#14 2.737 16:31:29 [build] mode: "static"
+#14 2.737 16:31:29 [build] directory: /app/dist/
+#14 2.737 16:31:29 [build] Collecting build info...
+#14 2.738 16:31:29 [build] ✓ Completed in 155ms.
+#14 2.739 16:31:29 [build] Building static entrypoints...
+#14 4.617 16:31:30 [vite] ✓ built in 1.83s
+#14 4.618 16:31:30 [build] ✓ Completed in 1.88s.
+#14 4.618 
+#14 4.618  building client (vite) 
+#14 4.637 16:31:30 [vite] transforming...
+#14 4.656 16:31:31 [vite] ✓ 6 modules transformed.
+#14 4.663 16:31:31 [vite] rendering chunks...
+#14 4.667 16:31:31 [vite] ✓ built in 43ms
+#14 4.694 
+#14 4.694  generating static routes 
+#14 4.734 16:31:31 ▶ src/pages/calendario.astro
+#14 4.734 16:31:31   └─ /calendario/index.htmlError fetching from Strapi: TypeError: fetch failed
+#14 4.745     at node:internal/deps/undici/undici:14902:13
+#14 4.745     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.745     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.745     at async file:///app/dist/pages/calendario.astro.mjs?time=1771605091056:256:22
+#14 4.745     at async callComponentAsTemplateResultOrResponse (file:///app/node_modules/astro/dist/runtime/server/render/astro/render.js:96:25)
+#14 4.745     at async renderToString (file:///app/node_modules/astro/dist/runtime/server/render/astro/render.js:14:26)
+#14 4.745     at async renderPage (file:///app/node_modules/astro/dist/runtime/server/render/page.js:49:12)
+#14 4.745     at async lastNext (file:///app/node_modules/astro/dist/core/render-context.js:215:25)
+#14 4.745     at async NOOP_MIDDLEWARE_FN (file:///app/node_modules/astro/dist/core/middleware/noop-middleware.js:3:20)
+#14 4.745     at async callMiddleware (file:///app/node_modules/astro/dist/core/middleware/callMiddleware.js:11:10) {
+#14 4.745   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.745       at internalConnectMultiple (node:net:1122:18)
+#14 4.745       at afterConnectMultiple (node:net:1689:7) {
+#14 4.745     code: 'ECONNREFUSED',
+#14 4.745     [errors]: [ [Error], [Error] ]
+#14 4.745   }
+#14 4.745 }
+#14 4.746 Error fetching calendar page data: TypeError: fetch failed
+#14 4.746     at node:internal/deps/undici/undici:14902:13
+#14 4.746     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.746     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.746     at async file:///app/dist/pages/calendario.astro.mjs?time=1771605091056:256:22
+#14 4.746     at async callComponentAsTemplateResultOrResponse (file:///app/node_modules/astro/dist/runtime/server/render/astro/render.js:96:25)
+#14 4.746     at async renderToString (file:///app/node_modules/astro/dist/runtime/server/render/astro/render.js:14:26)
+#14 4.746     at async renderPage (file:///app/node_modules/astro/dist/runtime/server/render/page.js:49:12)
+#14 4.746     at async lastNext (file:///app/node_modules/astro/dist/core/render-context.js:215:25)
+#14 4.746     at async NOOP_MIDDLEWARE_FN (file:///app/node_modules/astro/dist/core/middleware/noop-middleware.js:3:20)
+#14 4.746     at async callMiddleware (file:///app/node_modules/astro/dist/core/middleware/callMiddleware.js:11:10) {
+#14 4.746   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.746       at internalConnectMultiple (node:net:1122:18)
+#14 4.746       at afterConnectMultiple (node:net:1689:7) {
+#14 4.746     code: 'ECONNREFUSED',
+#14 4.746     [errors]: [ [Error], [Error] ]
+#14 4.746   }
+#14 4.746 }
+#14 4.756 Error fetching from Strapi: TypeError: fetch failed
+#14 4.756     at node:internal/deps/undici/undici:14902:13
+#14 4.756     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.756     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.756     at async file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1799:19 {
+#14 4.756   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.756       at internalConnectMultiple (node:net:1122:18)
+#14 4.756       at afterConnectMultiple (node:net:1689:7) {
+#14 4.756     code: 'ECONNREFUSED',
+#14 4.756     [errors]: [ [Error], [Error] ]
+#14 4.756   }
+#14 4.756 }
+#14 4.757 Error fetching from Strapi: TypeError: fetch failed
+#14 4.757     at node:internal/deps/undici/undici:14902:13
+#14 4.757     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.757     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.757     at async file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1817:22 {
+#14 4.757   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.757       at internalConnectMultiple (node:net:1122:18)
+#14 4.757       at afterConnectMultiple (node:net:1689:7) {
+#14 4.757     code: 'ECONNREFUSED',
+#14 4.757     [errors]: [ [Error], [Error] ]
+#14 4.757   }
+#14 4.757 }
+#14 4.757 Error fetching from Strapi: TypeError: fetch failed
+#14 4.757     at node:internal/deps/undici/undici:14902:13
+#14 4.757     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.757     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.757     at async file:///app/dist/pages/calendario.astro.mjs?time=1771605091056:65:22 {
+#14 4.757   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.757       at internalConnectMultiple (node:net:1122:18)
+#14 4.757       at afterConnectMultiple (node:net:1689:7) {
+#14 4.757     code: 'ECONNREFUSED',
+#14 4.757     [errors]: [ [Error], [Error] ]
+#14 4.757   }
+#14 4.757 }
+#14 4.758 Error fetching liturgical colors: TypeError: fetch failed
+#14 4.758     at node:internal/deps/undici/undici:14902:13
+#14 4.758     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.758     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.758     at async file:///app/dist/pages/calendario.astro.mjs?time=1771605091056:65:22 {
+#14 4.758   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.758       at internalConnectMultiple (node:net:1122:18)
+#14 4.758       at afterConnectMultiple (node:net:1689:7) {
+#14 4.758     code: 'ECONNREFUSED',
+#14 4.758     [errors]: [ [Error], [Error] ]
+#14 4.758   }
+#14 4.758 }
+#14 4.760 Error fetching from Strapi: TypeError: fetch failed
+#14 4.760     at node:internal/deps/undici/undici:14902:13
+#14 4.760     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.760     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.760     at async file:///app/dist/pages/calendario.astro.mjs?time=1771605091056:72:22 {
+#14 4.760   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.760       at internalConnectMultiple (node:net:1122:18)
+#14 4.760       at afterConnectMultiple (node:net:1689:7) {
+#14 4.760     code: 'ECONNREFUSED',
+#14 4.760     [errors]: [ [Error], [Error] ]
+#14 4.760   }
+#14 4.760 }
+#14 4.760 Error fetching daily inspiration: TypeError: fetch failed
+#14 4.760     at node:internal/deps/undici/undici:14902:13
+#14 4.760     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+#14 4.760     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.760     at async file:///app/dist/pages/calendario.astro.mjs?time=1771605091056:72:22 {
+#14 4.760   [cause]: AggregateError [ECONNREFUSED]: 
+#14 4.760       at internalConnectMultiple (node:net:1122:18)
+#14 4.760       at afterConnectMultiple (node:net:1689:7) {
+#14 4.760     code: 'ECONNREFUSED',
+#14 4.760     [errors]: [ [Error], [Error] ]
+#14 4.760   }
+#14 4.760 }
+#14 4.954 fetch failed
+#14 4.954   Stack trace:
+#14 4.954     at node:internal/deps/undici/undici:14902:13
+#14 4.954     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+#14 4.954   Caused by:
+#14 4.954   
+#14 4.954     at internalConnectMultiple (node:net:1122:18)
+#14 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [builder 6/6] RUN npm run build:
+4.760     [errors]: [ [Error], [Error] ]
+4.760   }
+4.760 }
+4.954 fetch failed
+4.954   Stack trace:
+4.954     at node:internal/deps/undici/undici:14902:13
+4.954     at async fetchAPI (file:///app/dist/chunks/Layout_DkoCbWx3.mjs:1772:22)
+4.954   Caused by:
+4.954   
+4.954     at internalConnectMultiple (node:net:1122:18)
+------
+Dockerfile:19
+
+--------------------
+
+  17 |     
+
+  18 |     # Build the Astro application
+
+  19 | >>> RUN npm run build
+
+  20 |     
+
+  21 |     # Stage 2: Serve with Nginx
+
+--------------------
+
+failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+

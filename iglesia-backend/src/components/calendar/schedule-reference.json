@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_calendar_schedule_references",
+  "info": {
+    "displayName": "Schedule Reference"
+  },
+  "options": {},
+  "attributes": {
+    "useHomeSchedule": {
+      "type": "boolean",
+      "default": false
+    },
+    "customSchedule": {
+      "type": "component",
+      "component": "schedule.schedule",
+      "repeatable": false
+    }
+  },
+  "config": {}
+}

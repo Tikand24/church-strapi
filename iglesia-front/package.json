@@ -6,7 +6,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "docker:build": "docker-compose build --no-cache",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:restart": "npm run docker:down && npm run docker:build && npm run docker:up",
+    "docker:logs": "docker-compose logs -f iglesia-front"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",

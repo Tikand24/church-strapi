@@ -442,6 +442,10 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    bannerLocation: Schema.Attribute.String;
+    bannerQuote: Schema.Attribute.String;
+    bannerQuoteSource: Schema.Attribute.String;
+    bannerTitle: Schema.Attribute.String;
     blocks: Schema.Attribute.DynamicZone<
       ['shared.media', 'shared.quote', 'shared.rich-text', 'shared.slider']
     >;
@@ -457,6 +461,7 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    weekTitle: Schema.Attribute.String;
   };
 }
 
@@ -529,6 +534,40 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCalendarPageCalendarPage extends Struct.SingleTypeSchema {
+  collectionName: 'calendar_pages';
+  info: {
+    displayName: 'Calendar Page';
+    pluralName: 'calendar-pages';
+    singularName: 'calendar-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    bannerQuote: Schema.Attribute.String;
+    bannerQuoteSource: Schema.Attribute.String;
+    bannerTitle: Schema.Attribute.String;
+    blocks: Schema.Attribute.DynamicZone<
+      ['calendar.list-of-cards', 'calendar.schedule-reference']
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::calendar-page.calendar-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    Seo: Schema.Attribute.Component<'shared.seo', false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -643,6 +682,44 @@ export interface ApiContactRequestContactRequest
   };
 }
 
+export interface ApiDailyInspirationDailyInspiration
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'daily_inspirations';
+  info: {
+    displayName: 'Daily Inspiration';
+    pluralName: 'daily-inspirations';
+    singularName: 'daily-inspiration';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    displayDate: Schema.Attribute.Date;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::daily-inspiration.daily-inspiration'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    quote: Schema.Attribute.Text & Schema.Attribute.Required;
+    saintDate: Schema.Attribute.Date;
+    saintImage: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    saintName: Schema.Attribute.String;
+    source: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFooterFooter extends Struct.SingleTypeSchema {
   collectionName: 'footers';
   info: {
@@ -738,6 +815,40 @@ export interface ApiHomeHome extends Struct.SingleTypeSchema {
     Seo: Schema.Attribute.Component<'shared.seo', false> &
       Schema.Attribute.Required;
     title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiLiturgicalColorLiturgicalColor
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'liturgical_colors';
+  info: {
+    displayName: 'Liturgical Color';
+    pluralName: 'liturgical-colors';
+    singularName: 'liturgical-color';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    hexCode: Schema.Attribute.String & Schema.Attribute.Required;
+    isActive: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::liturgical-color.liturgical-color'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    season: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1436,12 +1547,15 @@ declare module '@strapi/strapi' {
       'api::about.about': ApiAboutAbout;
       'api::article.article': ApiArticleArticle;
       'api::author.author': ApiAuthorAuthor;
+      'api::calendar-page.calendar-page': ApiCalendarPageCalendarPage;
       'api::category.category': ApiCategoryCategory;
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::contact-request.contact-request': ApiContactRequestContactRequest;
+      'api::daily-inspiration.daily-inspiration': ApiDailyInspirationDailyInspiration;
       'api::footer.footer': ApiFooterFooter;
       'api::global.global': ApiGlobalGlobal;
       'api::home.home': ApiHomeHome;
+      'api::liturgical-color.liturgical-color': ApiLiturgicalColorLiturgicalColor;
       'api::liturgical-event.liturgical-event': ApiLiturgicalEventLiturgicalEvent;
       'api::navigation.navigation': ApiNavigationNavigation;
       'api::news-letter-subscription.news-letter-subscription': ApiNewsLetterSubscriptionNewsLetterSubscription;

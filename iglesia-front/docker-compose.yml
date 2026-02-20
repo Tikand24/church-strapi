@@ -1,6 +1,10 @@
 services:
   iglesia-front:
-    build: .
+    build: 
+      context: .
+      args:
+        STRAPI_URL: ${STRAPI_URL:-http://localhost:1337}
+        STRAPI_TOKEN: ${STRAPI_TOKEN:-}
     container_name: iglesia-front
     ports:
       - "8080:80"

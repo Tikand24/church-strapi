@@ -1,0 +1,257 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NextMassBanner from '../components/calendar/NextMassBanner.astro';
+import WeekCalendar from '../components/calendar/WeekCalendar.astro';
+import InfoCards from '../components/calendar/InfoCards.astro';
+import type { CalendarScheduleTab } from '../types';
+import type { 
+  CalendarPageStrapiResponse, 
+  CalendarInfoCardStrapi, 
+  CalendarScheduleTabStrapi,
+  CalendarScheduleReference 
+} from '../types/calendar-page';
+import { fetchAPI } from '../lib/strapi';
+import qs from 'qs';
+
+// Fetch calendar page data from Strapi
+let bannerTitle = '¿A qué hora es la próxima Misa?';
+let bannerQuote = '"Vengan a mí todos los que están cansados y agobiados, y yo les daré descanso."';
+let bannerQuoteSource = 'Mateo 11:28';
+let infoCards: CalendarInfoCardStrapi[] = [];
+let scheduleTabs: CalendarScheduleTabStrapi[] = [];
+
+try {
+  const populateQuery = qs.stringify({
+    populate: {
+      blocks: {
+        on: {
+          'calendar.list-of-cards': {
+            populate: {
+              cards: {
+                populate: {
+                  link: {
+                    populate: true
+                  }
+                }
+              }
+            }
+          },
+          'calendar.schedule-reference': {
+            populate: {
+              customSchedule: {
+                populate: {
+                  ScheduleTab: {
+                    populate: {
+                      Item: {
+                        populate: true
+                      },
+                      liturgical_color: {
+                        populate: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }, { encodeValuesOnly: true });
+
+  const response = await fetchAPI<CalendarPageStrapiResponse>(`calendar-page?${populateQuery}`);
+  
+  if (response.data) {
+    bannerTitle = response.data.bannerTitle || bannerTitle;
+    bannerQuote = response.data.bannerQuote || bannerQuote;
+    bannerQuoteSource = response.data.bannerQuoteSource || bannerQuoteSource;
+    
+    // Extract cards from blocks
+    const listOfCardsBlock = response.data.blocks.find(
+      block => block.__component === 'calendar.list-of-cards'
+    );
+    if (listOfCardsBlock && '__component' in listOfCardsBlock && listOfCardsBlock.__component === 'calendar.list-of-cards') {
+      infoCards = listOfCardsBlock.cards;
+    }
+
+    // Extract schedule from blocks
+    const scheduleBlock = response.data.blocks.find(
+      block => block.__component === 'calendar.schedule-reference'
+    ) as CalendarScheduleReference | undefined;
+    
+    if (scheduleBlock?.customSchedule?.ScheduleTab) {
+      scheduleTabs = scheduleBlock.customSchedule.ScheduleTab;
+    }
+  }
+} catch (error) {
+  console.error('Error fetching calendar page data:', error);
+}
+
+// Convert Strapi schedule tabs to calendar format for NextMassBanner
+function convertStrapiScheduleToCalendar(strapiSchedule: CalendarScheduleTabStrapi[]): CalendarScheduleTab[] {
+  return strapiSchedule.map((tab: CalendarScheduleTabStrapi) => ({
+    id: tab.id,
+    Title: tab.Title,
+    Item: tab.Item.map((item: any) => ({
+      id: item.id,
+      time: item.time,
+      description: item.description || '',
+      Icon: item.Icon
+    }))
+  }));
+}
+
+const calendarScheduleData = scheduleTabs.length > 0 ? convertStrapiScheduleToCalendar(scheduleTabs) : [];
+
+// Fallback to static schedule data if no data from Strapi
+const SCHEDULE_DATA: CalendarScheduleTab[] = calendarScheduleData.length > 0 ? [] : [
+  {
+    id: 17,
+    Title: 'Lunes a Viernes',
+    Item: [
+      {
+        id: 51,
+        time: '07:00:00.000',
+        description: 'Misa Ordinaria',
+        Icon: null
+      },
+      {
+        id: 52,
+        time: '16:00:00.000',
+        description: 'Misa Ordinaria',
+        Icon: null
+      },
+      {
+        id: 53,
+        time: '18:00:00.000',
+        description: 'Misa Ordinaria',
+        Icon: null
+      }
+    ]
+  },
+  {
+    id: 18,
+    Title: 'Sabado',
+    Item: [
+      {
+        id: 54,
+        time: '06:00:00.000',
+        description: 'Misa Ordinaria',
+        Icon: null
+      },
+      {
+        id: 55,
+        time: '12:00:00.000',
+        description: 'Misa Ordinaria',
+        Icon: null
+      },
+      {
+        id: 56,
+        time: '14:00:00.000',
+        description: 'Bautismos',
+        Icon: null
+      },
+      {
+        id: 57,
+        time: '16:00:00.000',
+        description: 'Misa Ordinaria',
+        Icon: null
+      },
+      {
+        id: 58,
+        time: '18:00:00.000',
+        description: 'Misa Ordinaria',
+        Icon: null
+      }
+    ]
+  },
+  {
+    id: 19,
+    Title: 'Domingo',
+    Item: [
+      {
+        id: 59,
+        time: '07:00:00.000',
+        description: 'Misa Dominical',
+        Icon: null
+      },
+      {
+        id: 60,
+        time: '09:00:00.000',
+        description: 'Misa Dominical',
+        Icon: null
+      },
+      {
+        id: 61,
+        time: '10:30:00.000',
+        description: 'Misa niños comunión',
+        Icon: null
+      },
+      {
+        id: 62,
+        time: '12:00:00.000',
+        description: 'Misa Comunitaria',
+        Icon: null
+      },
+      {
+        id: 63,
+        time: '15:00:00.000',
+        description: 'Misa jóvenes confirmación',
+        Icon: null
+      },
+      {
+        id: 64,
+        time: '17:00:00.000',
+        description: 'Misa Dominical',
+        Icon: null
+      },
+      {
+        id: 65,
+        time: '19:00:00.000',
+        description: 'Misa Dominical',
+        Icon: null
+      }
+    ]
+  }
+];
+
+// Use Strapi schedule data if available, otherwise use fallback
+const finalScheduleTabs = calendarScheduleData.length > 0 ? calendarScheduleData : SCHEDULE_DATA;
+
+// SEO
+const pageTitle = 'Calendario de Misas - Parroquia Nuestra Señora de Belén';
+const pageDescription = 'Consulta los horarios de misas, confesiones y eventos litúrgicos de nuestra parroquia. Encuentra la próxima misa y planifica tu semana espiritual.';
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <main class="bg-background-light min-h-screen">
+    
+    <!-- Hero: Next Mass Banner -->
+    <section class="px-4 md:px-8 lg:px-16 xl:px-24 pt-8 pb-6">
+      <NextMassBanner 
+        scheduleTabs={finalScheduleTabs}
+        bannerTitle={bannerTitle}
+        bannerQuote={bannerQuote}
+        bannerQuoteSource={bannerQuoteSource}
+      />
+    </section>
+
+    <!-- Week Calendar Section -->
+    <section class="px-4 md:px-8 lg:px-16 xl:px-24 py-8">
+      <WeekCalendar scheduleTabs={finalScheduleTabs} strapiScheduleTabs={scheduleTabs} />
+    </section>
+
+    <!-- Info Cards Section -->
+    <section class="px-4 md:px-8 lg:px-16 xl:px-24 py-8 pb-16">
+      <InfoCards cards={infoCards} />
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  /* Ensure font-sans utility works for data/descriptions */
+  .font-sans {
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+</style>

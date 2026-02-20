@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "liturgical_colors",
+  "info": {
+    "singularName": "liturgical-color",
+    "pluralName": "liturgical-colors",
+    "displayName": "Liturgical Color"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "hexCode": {
+      "type": "string",
+      "required": true
+    },
+    "season": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "order": {
+      "type": "integer"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+---
+/**
+ * InfoCards - Bottom section with info cards from Strapi
+ */
+import type { CalendarInfoCardStrapi } from '../../types/calendar-page';
+
+interface Props {
+  cards?: CalendarInfoCardStrapi[];
+}
+
+const { cards = [] } = Astro.props;
+
+// Default icon SVG if not provided
+const defaultIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+</svg>`;
+---
+
+<section class="info-cards-section">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+    
+    {cards.length > 0 ? (
+      cards.map((card) => {
+        const isHighlight = card.variant === 'highlight';
+        const bgClass = isHighlight 
+          ? 'bg-accent-gold/15 border-accent-gold/30' 
+          : 'bg-gray-50 border-gray-200';
+        const iconBgClass = isHighlight ? 'bg-accent-gold' : 'bg-white';
+        const iconColorClass = isHighlight ? 'text-white' : 'text-primary';
+        
+        return (
+          <div class={`info-card rounded-2xl p-6 border hover:shadow-md transition-shadow ${bgClass}`}>
+            <div class="flex items-start gap-4">
+              <div class={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${iconBgClass}`}>
+                <div class={iconColorClass} set:html={card.iconSvg || defaultIcon} />
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-800 mb-1">{card.title}</h3>
+                <p class="text-sm font-sans text-gray-600 leading-relaxed whitespace-pre-line">
+                  {card.description}
+                </p>
+                {card.link && (
+                  <a 
+                    href={card.link.link} 
+                    target={card.link.redirectOutside ? '_blank' : '_self'}
+                    rel={card.link.redirectOutside ? 'noopener noreferrer' : undefined}
+                    class="inline-flex items-center gap-1 text-sm font-sans font-medium text-primary mt-3 hover:underline"
+                  >
+                    {card.link.text}
+                    <div class="w-4 h-4" set:html={card.link.iconSvg || `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>`} />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })
+    ) : (
+      <p class="col-span-full text-center text-gray-500 py-8">
+        No hay tarjetas de información disponibles
+      </p>
+    )}
+
+  </div>
+</section>

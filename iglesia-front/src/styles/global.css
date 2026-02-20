@@ -13,3 +13,8 @@
   font-family: "Newsreader", serif;
   font-optical-sizing: auto;
 }
+
+/* Sans-serif font for data, labels, and descriptions */
+.font-sans {
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}

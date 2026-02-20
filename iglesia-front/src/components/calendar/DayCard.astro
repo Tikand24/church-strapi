@@ -1,0 +1,111 @@
+---
+import type { DayCardProps } from '../../types';
+
+interface Props extends DayCardProps {
+  liturgicalColor?: string | null;
+}
+
+const { dayConfig, dayNumber, month, masses, isToday = false, liturgicalColor } = Astro.props;
+
+// Vatican gold color (from Holy See flag)
+const VATICAN_GOLD = '#FFD700';
+
+// Check if color is white or very light (close to white)
+function isWhiteColor(color: string | null | undefined): boolean {
+  if (!color) return false;
+  const hex = color.toLowerCase().replace('#', '');
+  // Check for #ffffff, #fff, or very light colors (f's)
+  return hex === 'ffffff' || hex === 'fff' || /^f{3,6}$/.test(hex);
+}
+
+// Get display color (replace white with Vatican gold)
+const displayColor = liturgicalColor && isWhiteColor(liturgicalColor) 
+  ? VATICAN_GOLD 
+  : liturgicalColor;
+
+// Format time from "HH:MM:SS.mmm" to { time: "HH:MM", period: "AM/PM" }
+function formatTime(timeStr: string): { time: string; period: string } {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const displayHours = hours % 12 || 12;
+  return {
+    time: `${displayHours}:${minutes.toString().padStart(2, '0')}`,
+    period
+  };
+}
+
+// Month names in Spanish
+const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+---
+
+<div 
+  class:list={[
+    "day-card flex flex-col rounded-2xl p-3 min-h-[180px] transition-all duration-200 relative overflow-hidden",
+    isToday 
+      ? "border-2 border-accent-gold bg-accent-gold/5 day-card--today" 
+      : "border border-gray-200 bg-white hover:border-gray-300"
+  ]}
+  data-day-index={dayConfig.dayIndex}
+>
+  <!-- Liturgical Color Bar -->
+  {displayColor && (
+    <div 
+      class="absolute top-0 left-0 right-0 h-1"
+      style={`background-color: ${displayColor}`}
+    ></div>
+  )}
+
+  <!-- Day Header -->
+  <div class="text-center mb-3 mt-1">
+    <span class="block text-xs font-sans font-semibold text-gray-500 uppercase tracking-wide">
+      {dayConfig.shortName}
+    </span>
+    <span 
+      class:list={[
+        "day-number block text-2xl font-bold",
+        isToday ? "text-accent-gold" : "text-gray-800"
+      ]}
+    >
+      {dayNumber}
+    </span>
+    <span class="block text-xs font-sans text-gray-400">
+      {monthNames[month]}
+    </span>
+  </div>
+
+  <!-- Special Label Badge (liturgical season) -->
+  {dayConfig.specialLabel && (
+    <div class="mb-2 flex justify-center">
+      <span 
+        class="text-[10px] font-sans font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+        style={displayColor 
+          ? `background-color: ${displayColor}20; color: ${displayColor};` 
+          : 'background-color: rgba(212, 175, 55, 0.2); color: #d4af37;'
+        }
+      >
+        {dayConfig.specialLabel}
+      </span>
+    </div>
+  )}
+
+  <!-- Mass Times Pills -->
+  <div class="flex-1 flex flex-col gap-2">
+    {masses.map((mass) => {
+      const { time, period } = formatTime(mass.time);
+      return (
+        <div 
+          class:list={[
+            "mass-pill flex flex-col items-center justify-center font-sans rounded-xl px-2 py-2 transition-colors",
+            isToday 
+              ? "bg-accent-gold text-white mass-pill--today" 
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          ]}
+          title={mass.description}
+        >
+          <span class="text-base font-bold leading-tight">{time}</span>
+          <span class="text-[10px] uppercase tracking-wide opacity-80">{period}</span>
+        </div>
+      );
+    })}
+  </div>
+</div>

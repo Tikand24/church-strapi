@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "daily_inspirations",
+  "info": {
+    "singularName": "daily-inspiration",
+    "pluralName": "daily-inspirations",
+    "displayName": "Daily Inspiration"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "quote": {
+      "type": "text",
+      "required": true
+    },
+    "source": {
+      "type": "string",
+      "required": true
+    },
+    "saintName": {
+      "type": "string"
+    },
+    "saintDate": {
+      "type": "date"
+    },
+    "saintImage": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayDate": {
+      "type": "date"
+    }
+  }
+}

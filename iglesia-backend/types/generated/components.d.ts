@@ -1,5 +1,42 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface CalendarInfoCard extends Struct.ComponentSchema {
+  collectionName: 'components_calendar_info_cards';
+  info: {
+    displayName: 'Info Card';
+  };
+  attributes: {
+    backgroundColor: Schema.Attribute.String;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    iconSvg: Schema.Attribute.RichText;
+    link: Schema.Attribute.Component<'shared.link', false>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    variant: Schema.Attribute.Enumeration<['default', 'highlight']>;
+  };
+}
+
+export interface CalendarListOfCards extends Struct.ComponentSchema {
+  collectionName: 'components_calendar_list_of_cards';
+  info: {
+    displayName: 'List Of Cards';
+  };
+  attributes: {
+    cards: Schema.Attribute.Component<'calendar.info-card', true>;
+  };
+}
+
+export interface CalendarScheduleReference extends Struct.ComponentSchema {
+  collectionName: 'components_calendar_schedule_references';
+  info: {
+    displayName: 'Schedule Reference';
+  };
+  attributes: {
+    customSchedule: Schema.Attribute.Component<'schedule.schedule', false>;
+    useHomeSchedule: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+  };
+}
+
 export interface ContactContactForm extends Struct.ComponentSchema {
   collectionName: 'components_contact_contact_forms';
   info: {
@@ -270,6 +307,10 @@ export interface ScheduleScheduleGroup extends Struct.ComponentSchema {
   };
   attributes: {
     Item: Schema.Attribute.Component<'schedule.schedule-item', true>;
+    liturgical_color: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::liturgical-color.liturgical-color'
+    >;
     Title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Domingo'>;
@@ -419,6 +460,9 @@ export interface SharedSliderComunity extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'calendar.info-card': CalendarInfoCard;
+      'calendar.list-of-cards': CalendarListOfCards;
+      'calendar.schedule-reference': CalendarScheduleReference;
       'contact.contact-form': ContactContactForm;
       'contact.contact-info': ContactContactInfo;
       'contact.map-contact-info': ContactMapContactInfo;

@@ -1,0 +1,161 @@
+---
+import DayCard from './DayCard.astro';
+import CalendarSidebar from './CalendarSidebar.astro';
+import type { WeekCalendarProps, CalendarDayConfig, CalendarMassItem, CalendarScheduleTab } from '../../types';
+import type { CalendarScheduleTabStrapi } from '../../types/calendar-page';
+
+interface Props extends WeekCalendarProps {
+  strapiScheduleTabs?: CalendarScheduleTabStrapi[];
+}
+
+const { scheduleTabs, strapiScheduleTabs = [] } = Astro.props;
+
+// Map of day names in Spanish (lowercase) for matching
+const DAY_NAME_MAP: Record<string, number> = {
+  'lunes': 1,
+  'martes': 2,
+  'miércoles': 3,
+  'miercoles': 3,
+  'jueves': 4,
+  'viernes': 5,
+  'sábado': 6,
+  'sabado': 6,
+  'domingo': 0,
+};
+
+// Day configurations (Monday = index 1, Sunday = index 0 in JS Date)
+const DAY_CONFIGS: CalendarDayConfig[] = [
+  { dayIndex: 1, shortName: 'LUN', fullName: 'Lunes' },
+  { dayIndex: 2, shortName: 'MAR', fullName: 'Martes' },
+  { dayIndex: 3, shortName: 'MIÉ', fullName: 'Miércoles' },
+  { dayIndex: 4, shortName: 'JUE', fullName: 'Jueves' },
+  { dayIndex: 5, shortName: 'VIE', fullName: 'Viernes' },
+  { dayIndex: 6, shortName: 'SÁB', fullName: 'Sábado' },
+  { dayIndex: 0, shortName: 'DOM', fullName: 'Domingo', isLordDay: true },
+];
+
+// Static special events for demo (some days)
+const SPECIAL_EVENTS: Record<string, string> = {
+  '12-6': 'S. Nicolás de Bari',
+  '12-8': 'Inmaculada Concepción',
+  '12-12': 'Ntra. Sra. de Guadalupe',
+  '12-25': 'Natividad del Señor',
+};
+
+// Helper to get masses and liturgical color for a day from Strapi data
+function getDataForDay(dayIndex: number, tabs: CalendarScheduleTab[], strapiTabs: CalendarScheduleTabStrapi[]): {
+  masses: CalendarMassItem[];
+  liturgicalColor: string | null;
+  specialLabel: string | null;
+} {
+  // First try to get data from Strapi tabs
+  if (strapiTabs.length > 0) {
+    for (const tab of strapiTabs) {
+      const title = tab.Title.toLowerCase();
+      const dayName = Object.keys(DAY_NAME_MAP).find(name => title.includes(name));
+      
+      if (dayName && DAY_NAME_MAP[dayName] === dayIndex) {
+        return {
+          masses: tab.Item.map((item: any) => ({
+            id: item.id,
+            time: item.time,
+            description: item.description || '',
+            Icon: item.Icon
+          })),
+          liturgicalColor: tab.liturgical_color?.hexCode || null,
+          specialLabel: tab.liturgical_color?.season || null
+        };
+      }
+    }
+  }
+  
+  // Fallback to regular schedule tabs
+  for (const tab of tabs) {
+    const title = tab.Title.toLowerCase();
+    // Monday to Friday (1-5)
+    if ((title.includes('lunes') || title.includes('viernes')) && dayIndex >= 1 && dayIndex <= 5) {
+      return { masses: tab.Item || [], liturgicalColor: null, specialLabel: null };
+    }
+    // Saturday (6)
+    if (title.includes('sabad') && dayIndex === 6) {
+      return { masses: tab.Item || [], liturgicalColor: null, specialLabel: null };
+    }
+    // Sunday (0)
+    if (title.includes('domingo') && dayIndex === 0) {
+      return { masses: tab.Item || [], liturgicalColor: null, specialLabel: null };
+    }
+  }
+  return { masses: [], liturgicalColor: null, specialLabel: null };
+}
+
+// Calculate current week dates
+const today = new Date();
+const currentDayOfWeek = today.getDay(); // 0=Sun, 1=Mon...
+const mondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
+const monday = new Date(today);
+monday.setDate(today.getDate() + mondayOffset);
+
+// Generate week data
+const weekDays = DAY_CONFIGS.map((config, index) => {
+  const date = new Date(monday);
+  date.setDate(monday.getDate() + index);
+  const dateKey = `${date.getMonth() + 1}-${date.getDate()}`;
+  const staticSpecialLabel = SPECIAL_EVENTS[dateKey];
+  
+  // Get data from Strapi or fallback
+  const dayData = getDataForDay(config.dayIndex, scheduleTabs, strapiScheduleTabs);
+  
+  return {
+    config: { ...config, specialLabel: dayData.specialLabel || staticSpecialLabel },
+    dayNumber: date.getDate(),
+    month: date.getMonth(),
+    masses: dayData.masses,
+    isToday: date.toDateString() === today.toDateString(),
+    liturgicalColor: dayData.liturgicalColor,
+  };
+});
+
+// Format date range for header
+const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const sunday = new Date(monday);
+sunday.setDate(monday.getDate() + 6);
+
+// Handle month spanning
+let weekRangeText: string;
+if (monday.getMonth() === sunday.getMonth()) {
+  weekRangeText = `Del ${monday.getDate()} al ${sunday.getDate()} de ${monthNames[sunday.getMonth()]}`;
+} else {
+  weekRangeText = `Del ${monday.getDate()} de ${monthNames[monday.getMonth()]} al ${sunday.getDate()} de ${monthNames[sunday.getMonth()]}`;
+}
+---
+
+<section class="week-calendar">
+  <!-- Header with title -->
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Esta Semana</h2>
+      <p class="text-sm font-sans text-gray-500 mt-1">{weekRangeText}</p>
+    </div>
+  </div>
+
+  <!-- Main Content: Calendar Grid + Sidebar -->
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+    
+    <!-- Days Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+      {weekDays.map((day) => (
+        <DayCard 
+          dayConfig={day.config}
+          dayNumber={day.dayNumber}
+          month={day.month}
+          masses={day.masses}
+          isToday={day.isToday}
+          liturgicalColor={day.liturgicalColor}
+        />
+      ))}
+    </div>
+
+    <!-- Sidebar -->
+    <CalendarSidebar />
+  </div>
+</section>

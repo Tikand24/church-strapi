@@ -1,0 +1,128 @@
+---
+/**
+ * CalendarSidebar - Right sidebar with inspiration and liturgical color widgets
+ */
+import { fetchAPI } from '../../lib/strapi';
+import type { LiturgicalColorStrapi, LiturgicalColorStrapiResponse } from '../../types/liturgical-color';
+import type { DailyInspirationStrapi, DailyInspirationStrapiResponse } from '../../types/daily-inspiration';
+
+// Fetch liturgical colors from Strapi
+let liturgicalColors: LiturgicalColorStrapi[] = [];
+try {
+  const response = await fetchAPI<LiturgicalColorStrapiResponse>('liturgical-colors');
+  // Sort by order field to maintain consistent display
+  liturgicalColors = (response.data || []).sort((a, b) => a.order - b.order);
+} catch (error) {
+  console.error('Error fetching liturgical colors:', error);
+}
+
+// Fetch daily inspiration from Strapi
+let dailyInspiration: DailyInspirationStrapi | null = null;
+try {
+  const response = await fetchAPI<DailyInspirationStrapiResponse>('daily-inspirations');
+  // Find the active inspiration
+  dailyInspiration = response.data.find((inspiration: DailyInspirationStrapi) => inspiration.isActive === true) || null;
+} catch (error) {
+  console.error('Error fetching daily inspiration:', error);
+}
+
+// Format saint date if available
+const formatSaintDate = (dateString: string | null) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
+  return date.toLocaleDateString('es-ES', options);
+};
+---
+
+<aside class="calendar-sidebar space-y-6">
+  
+  <!-- Inspiración de Hoy Widget -->
+  <div class="inspiration-widget bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">Inspiración de Hoy</h3>
+    
+    {dailyInspiration ? (
+      <>
+        <!-- Saint/Icon Illustration -->
+        <div class="flex justify-center mb-4">
+          <div class="w-20 h-20 bg-gradient-to-br from-accent-gold/20 to-accent-gold/5 rounded-full flex items-center justify-center">
+            <svg class="w-10 h-10 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m0 14v1m-7-8h1m14 0h1M6.343 6.343l.707.707m9.9 9.9l.707.707M6.343 17.657l.707-.707m9.9-9.9l.707-.707"></path>
+              <circle cx="12" cy="12" r="4" stroke-width="1.5"></circle>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Quote -->
+        <blockquote class="text-center">
+          <p class="text-sm italic text-gray-600 leading-relaxed mb-2">
+            "{dailyInspiration.quote}"
+          </p>
+          <footer class="text-xs font-sans text-gray-400">
+            — {dailyInspiration.source}
+          </footer>
+        </blockquote>
+        
+        <!-- Saint of the Day -->
+        <div class="mt-4 pt-4 border-t border-gray-100 text-center">
+          <span class="text-xs font-sans font-semibold text-gray-500 uppercase tracking-wide">Santo del día</span>
+          <p class="text-sm font-medium text-gray-700 mt-1">{dailyInspiration.saintName}</p>
+          <p class="text-xs font-sans text-gray-400">{formatSaintDate(dailyInspiration.saintDate)}</p>
+        </div>
+      </>
+    ) : (
+      <p class="text-sm text-gray-500 text-center py-4">
+        No hay inspiración disponible para hoy
+      </p>
+    )}
+  </div>
+
+  <!-- Significado del Color Widget -->
+  <div class="color-widget bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">Colores Litúrgicos</h3>
+    
+    <div class="space-y-3">
+      {liturgicalColors.map((color) => (
+        <div class="flex items-center gap-3">
+          <div 
+            class="w-8 h-8 rounded-lg flex-shrink-0 shadow-sm" 
+            style={`background-color: ${color.hexCode}; ${color.hexCode.toUpperCase() === '#FFFFFF' ? 'border: 2px solid #e5e7eb;' : ''}`}
+          ></div>
+          <div>
+            <p class="text-sm font-medium text-gray-700">{color.name}</p>
+            <p class="text-xs font-sans text-gray-500">{color.season}</p>
+          </div>
+        </div>
+      ))}
+      
+      {liturgicalColors.length === 0 && (
+        <p class="text-sm text-gray-500 text-center py-4">
+          No hay colores litúrgicos disponibles
+        </p>
+      )}
+      
+      <!-- Divider and explanation -->
+      <div class="pt-3 border-t border-gray-100">
+        <p class="text-xs font-sans text-gray-400 leading-relaxed">
+          Los colores litúrgicos expresan el carácter de los misterios que se celebran.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Link Widget -->
+  <div class="quick-link-widget bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20 p-5">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+        </svg>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-700">Leccionario</p>
+        <p class="text-xs font-sans text-primary-text">Lecturas del día</p>
+      </div>
+    </div>
+  </div>
+
+</aside>

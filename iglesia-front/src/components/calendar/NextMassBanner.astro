@@ -1,0 +1,201 @@
+---
+import type { NextMassBannerProps } from '../../types';
+
+interface Props extends NextMassBannerProps {
+  bannerTitle?: string;
+  bannerQuote?: string;
+  bannerQuoteSource?: string;
+}
+
+const { scheduleTabs, bannerTitle, bannerQuote, bannerQuoteSource } = Astro.props;
+
+// Serialize schedule data for client-side JS
+const scheduleDataJson = JSON.stringify(scheduleTabs);
+---
+
+<div class="next-mass-banner bg-background-dark rounded-2xl p-6 md:p-8 lg:p-10">
+  <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+    
+    <!-- Left Side: Badge + Title + Quote -->
+    <div class="flex-1 text-center lg:text-left">
+      <!-- Badge -->
+      <span class="inline-block bg-accent-gold text-background-dark text-xs font-sans font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+        Ahora Mismo
+      </span>
+      
+      <!-- Main Title -->
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+        {bannerTitle || '¿A qué hora es la próxima Misa?'}
+      </h1>
+      
+      <!-- Inspirational Quote -->
+      <p class="text-lg italic text-gray-400">
+        {bannerQuote || '"Vengan a mí todos los que están cansados y agobiados, y yo les daré descanso."'}
+      </p>
+      <p class="text-sm font-sans text-gray-500 mt-1">— {bannerQuoteSource || 'Mateo 11:28'}</p>
+    </div>
+
+    <!-- Right Side: Next Mass Time -->
+    <div class="flex-shrink-0 text-center lg:text-right">
+      <!-- Time Display -->
+      <div class="mb-2">
+        <span 
+          id="next-mass-time" 
+          class="block text-5xl md:text-6xl lg:text-7xl font-sans font-bold text-white tracking-tight"
+        >
+          --:-- --
+        </span>
+      </div>
+      
+      <!-- Date Display -->
+      <div class="mb-3">
+        <span 
+          id="next-mass-date" 
+          class="block text-lg md:text-xl font-sans font-semibold text-accent-gold uppercase tracking-wide"
+        >
+          Cargando...
+        </span>
+      </div>
+      
+      <!-- Location -->
+      <div class="flex items-center justify-center lg:justify-end gap-2 text-gray-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <span class="font-sans text-sm">Templo Parroquial</span>
+      </div>
+
+      <!-- Mass Description -->
+      <div class="mt-2">
+        <span id="next-mass-description" class="text-sm font-sans text-gray-500">
+          <!-- Filled by JS -->
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden data for JS -->
+<script id="schedule-data-banner" type="application/json" set:html={scheduleDataJson}></script>
+
+<script>
+  interface MassItem {
+    id: number;
+    time: string;
+    description: string;
+  }
+
+  interface ScheduleTab {
+    id: number;
+    Title: string;
+    Item: MassItem[];
+  }
+
+  function initNextMassBanner() {
+    const dataEl = document.getElementById('schedule-data-banner');
+    if (!dataEl) return;
+
+    const scheduleTabs: ScheduleTab[] = JSON.parse(dataEl.textContent || '[]');
+    
+    const timeEl = document.getElementById('next-mass-time');
+    const dateEl = document.getElementById('next-mass-date');
+    const descEl = document.getElementById('next-mass-description');
+
+    if (!timeEl || !dateEl) return;
+
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=Sunday, 1=Monday...6=Saturday
+
+    // Map day of week to schedule tab
+    // "Lunes a Viernes" = days 1-5
+    // "Sabado" = day 6
+    // "Domingo" = day 0
+    let relevantTab: ScheduleTab | undefined;
+    
+    for (const tab of scheduleTabs) {
+      const title = tab.Title.toLowerCase();
+      if (title.includes('viernes') && dayOfWeek >= 1 && dayOfWeek <= 5) {
+        relevantTab = tab;
+        break;
+      } else if (title.includes('sabado') && dayOfWeek === 6) {
+        relevantTab = tab;
+        break;
+      } else if (title.includes('domingo') && dayOfWeek === 0) {
+        relevantTab = tab;
+        break;
+      }
+    }
+
+    if (!relevantTab || !relevantTab.Item || relevantTab.Item.length === 0) {
+      timeEl.textContent = 'Sin misas';
+      dateEl.textContent = 'Hoy';
+      return;
+    }
+
+    // Current time in minutes since midnight
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // Find next mass
+    let nextMass: MassItem | undefined;
+    for (const mass of relevantTab.Item) {
+      const [hours, minutes] = mass.time.split(':').map(Number);
+      const massMinutes = hours * 60 + minutes;
+      if (massMinutes > currentMinutes) {
+        nextMass = mass;
+        break;
+      }
+    }
+
+    // Day names in Spanish
+    const dayNames = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
+
+    if (nextMass) {
+      // Format time
+      const [hours, minutes] = nextMass.time.split(':').map(Number);
+      const period = hours >= 12 ? 'P.M.' : 'A.M.';
+      const displayHours = hours % 12 || 12;
+      timeEl.textContent = `${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
+      dateEl.textContent = `HOY ${dayNames[dayOfWeek]}`;
+      if (descEl) descEl.textContent = nextMass.description;
+    } else {
+      // No more masses today, show first mass of tomorrow
+      const tomorrowDay = (dayOfWeek + 1) % 7;
+      let tomorrowTab: ScheduleTab | undefined;
+      
+      for (const tab of scheduleTabs) {
+        const title = tab.Title.toLowerCase();
+        if (title.includes('viernes') && tomorrowDay >= 1 && tomorrowDay <= 5) {
+          tomorrowTab = tab;
+          break;
+        } else if (title.includes('sabado') && tomorrowDay === 6) {
+          tomorrowTab = tab;
+          break;
+        } else if (title.includes('domingo') && tomorrowDay === 0) {
+          tomorrowTab = tab;
+          break;
+        }
+      }
+
+      if (tomorrowTab && tomorrowTab.Item && tomorrowTab.Item.length > 0) {
+        const firstMass = tomorrowTab.Item[0];
+        const [hours, minutes] = firstMass.time.split(':').map(Number);
+        const period = hours >= 12 ? 'P.M.' : 'A.M.';
+        const displayHours = hours % 12 || 12;
+        timeEl.textContent = `${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
+        dateEl.textContent = `MAÑANA ${dayNames[tomorrowDay]}`;
+        if (descEl) descEl.textContent = firstMass.description;
+      } else {
+        timeEl.textContent = '--:-- --';
+        dateEl.textContent = 'Sin información';
+      }
+    }
+  }
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', initNextMassBanner);
+  // Also run immediately in case DOM is already ready
+  if (document.readyState !== 'loading') {
+    initNextMassBanner();
+  }
+</script>

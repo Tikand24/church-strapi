@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_calendar_info_cards",
+  "info": {
+    "displayName": "Info Card"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "iconSvg": {
+      "type": "richtext"
+    },
+    "link": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false
+    },
+    "variant": {
+      "type": "enumeration",
+      "enum": [
+        "default",
+        "highlight"
+      ]
+    },
+    "backgroundColor": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

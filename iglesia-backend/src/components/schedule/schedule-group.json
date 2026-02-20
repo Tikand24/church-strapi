@@ -15,6 +15,11 @@
       "type": "component",
       "component": "schedule.schedule-item",
       "repeatable": true
+    },
+    "liturgical_color": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::liturgical-color.liturgical-color"
     }
   },
   "config": {}

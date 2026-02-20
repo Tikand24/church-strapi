@@ -1,0 +1,36 @@
+{
+  "kind": "singleType",
+  "collectionName": "calendar_pages",
+  "info": {
+    "singularName": "calendar-page",
+    "pluralName": "calendar-pages",
+    "displayName": "Calendar Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    },
+    "bannerTitle": {
+      "type": "string"
+    },
+    "bannerQuote": {
+      "type": "string"
+    },
+    "bannerQuoteSource": {
+      "type": "string"
+    },
+    "blocks": {
+      "type": "dynamiczone",
+      "components": [
+        "calendar.list-of-cards",
+        "calendar.schedule-reference"
+      ]
+    }
+  }
+}

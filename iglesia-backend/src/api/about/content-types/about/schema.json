@@ -28,6 +28,21 @@
       "type": "component",
       "component": "shared.seo",
       "repeatable": false
+    },
+    "bannerTitle": {
+      "type": "string"
+    },
+    "bannerQuote": {
+      "type": "string"
+    },
+    "bannerQuoteSource": {
+      "type": "string"
+    },
+    "bannerLocation": {
+      "type": "string"
+    },
+    "weekTitle": {
+      "type": "string"
     }
   }
 }
